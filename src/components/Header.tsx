@@ -14,6 +14,7 @@ const financeItems = [
 const navLinks = [
   { href: "/#rates", label: "Rates" },
   { href: "/#calculator", label: "Calculator" },
+  { href: "/about", label: "About" },
 ];
 
 export function Header() {

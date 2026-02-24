@@ -272,7 +272,7 @@ export function FAQDome() {
             {faqs.slice(0, 4).map((faq, index) => (
               <div
                 key={index}
-                className="bg-card border border-border rounded-2xl p-5 hover:border-primary/30 hover:shadow-md transition-all"
+                className="bg-card border border-border rounded-2xl p-5 hover:border-primary/30 transition-all"
               >
                 <h4 className="font-semibold text-foreground mb-2 text-base">
                   {faq.q}
@@ -284,7 +284,7 @@ export function FAQDome() {
             ))}
 
             {/* Have a Question Card */}
-            <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-2 border-primary/20 rounded-2xl p-6 flex flex-col items-center justify-center text-center hover:border-primary/40 transition-all hover:shadow-lg sm:col-span-2">
+            <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border-2 border-primary/20 rounded-2xl p-6 flex flex-col items-center justify-center text-center hover:border-primary/40 transition-all sm:col-span-2">
               <div className="inline-flex p-3 rounded-full bg-primary/10 mb-3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
                   <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>

@@ -126,7 +126,7 @@ export function MortgageCalculator() {
           This is the average rate. Your exact rate might be lower.
         </p>
 
-        <div className="mt-8 max-w-6xl mx-auto bg-card border-2 border-border rounded-3xl p-8 shadow-lg">
+        <div className="mt-8 max-w-6xl mx-auto bg-card border-2 border-border rounded-3xl p-8">
           <div className="grid lg:grid-cols-[1fr_auto] gap-8 items-start">
             {/* Left side - Inputs */}
             <div className="space-y-6">
@@ -344,7 +344,7 @@ export function MortgageCalculator() {
                         className={cn(
                           "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
                           financingType === t
-                            ? "bg-blue-500/80 text-white shadow-lg shadow-blue-500/25"
+                            ? "bg-blue-500/80 text-white"
                             : "bg-slate-600/50 text-slate-300 hover:bg-slate-500/50 hover:text-white border border-slate-500/30"
                         )}
                       >
@@ -364,7 +364,7 @@ export function MortgageCalculator() {
                         className={cn(
                           "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
                           employmentType === t
-                            ? "bg-blue-500/80 text-white shadow-lg shadow-blue-500/25"
+                            ? "bg-blue-500/80 text-white"
                             : "bg-slate-600/50 text-slate-300 hover:bg-slate-500/50 hover:text-white border border-slate-500/30"
                         )}
                       >
@@ -481,7 +481,7 @@ export function MortgageCalculator() {
 
               <button
                 type="submit"
-                className="w-full h-14 rounded-lg text-base font-semibold text-white bg-blue-500 hover:bg-blue-600 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-800 transition-all"
+                className="w-full h-14 rounded-lg text-base font-semibold text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-800 transition-all"
               >
                 Send
               </button>

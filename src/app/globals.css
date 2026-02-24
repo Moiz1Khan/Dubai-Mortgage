@@ -4,11 +4,11 @@
 :root {
   --background: #f8f9fa;
   --background-gradient: linear-gradient(to bottom, #8B9FD9 0%, #9CADDD 8%, #B8C4E8 15%, #D8DEF2 22%, #EEF0F9 30%, #FAFAFC 45%, #FFFFFF 70%, #FFFFFF 100%);
-  --foreground: #111827;
-  --muted: #6b7280;
-  --muted-foreground: #6b7280;
+  --foreground: #000000;
+  --muted: #1f2937;
+  --muted-foreground: #1f2937;
   --card: #ffffff;
-  --card-foreground: #111827;
+  --card-foreground: #000000;
   --primary: #28303a;
   --primary-foreground: #ffffff;
   --secondary: #f3f4f6;
@@ -357,66 +357,6 @@ body {
   transform: scale(1);
 }
 
-/* ── Futuristic Magnetic Cursor ────────────────────────────────────────── */
-.cursor-dot,
-.cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
-  pointer-events: none;
-  z-index: 9999;
-  border-radius: 50%;
-  will-change: transform;
-}
-
-/* Sharp inner dot */
-.cursor-dot {
-  width: 6px;
-  height: 6px;
-  background: #28303a;
-  margin-left: -3px;
-  margin-top: -3px;
-  box-shadow: 0 0 8px 2px rgba(40, 48, 58, 0.45);
-  transition: transform 0.08s ease, background 0.2s ease;
-}
-
-/* Glowing trailing ring */
-.cursor-ring {
-  width: 32px;
-  height: 32px;
-  margin-left: -16px;
-  margin-top: -16px;
-  border: 1.5px solid rgba(40, 48, 58, 0.5);
-  background: rgba(40, 48, 58, 0.04);
-  box-shadow: 0 0 12px 2px rgba(40, 48, 58, 0.12),
-              inset 0 0 8px rgba(40, 48, 58, 0.06);
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-              border-color 0.25s ease,
-              box-shadow 0.25s ease;
-  backdrop-filter: blur(2px);
-}
-
-/* Cursor morph on interactive hover */
-.cursor-ring[style*="scale(2.2)"],
-.cursor-ring:hover {
-  border-color: rgba(40, 48, 58, 0.8);
-  box-shadow: 0 0 20px 4px rgba(40, 48, 58, 0.18),
-              inset 0 0 14px rgba(40, 48, 58, 0.1);
-}
-
-/* Cursor press shrink */
-.cursor-dot.cursor-pressed {
-  transform: scale(0.5) !important;
-  background: #28303a;
-}
-
-/* Only show custom cursor on non-touch devices */
-@media (pointer: coarse) {
-  .cursor-dot,
-  .cursor-ring {
-    display: none;
-  }
-}
 
 /* Hide scrollbar utility */
 .scrollbar-hide {

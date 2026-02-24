@@ -29,7 +29,7 @@ export function ComparisonSection() {
         </p>
 
         <div className="overflow-x-auto">
-          <div className="grid grid-cols-3 min-w-[600px] gap-0 border border-border rounded-2xl overflow-hidden bg-card shadow-sm">
+          <div className="grid grid-cols-3 min-w-[600px] gap-0 border border-border rounded-2xl overflow-hidden bg-card">
             {cols.map((col) => (
               <div
                 key={col.key}

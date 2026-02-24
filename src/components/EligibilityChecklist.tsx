@@ -62,7 +62,7 @@ export function EligibilityChecklist() {
               className={cn(
                 "flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-colors",
                 active === tab.id
-                  ? "bg-[#28303a] text-white shadow-sm"
+                  ? "bg-[#28303a] text-white"
                   : "text-muted-foreground hover:text-foreground hover:bg-white/60"
               )}
             >
@@ -72,7 +72,7 @@ export function EligibilityChecklist() {
         </div>
 
         {/* Interactive checklist - click to tick */}
-        <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-sm">
+        <div className="bg-card border border-border rounded-2xl p-6 md:p-8">
           <p className="text-sm text-muted-foreground mb-4">
             Tap each item when you&apos;ve gathered it — {checkedCount}/{items.length} ready
           </p>

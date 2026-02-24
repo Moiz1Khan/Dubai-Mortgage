@@ -3,7 +3,6 @@ import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { CursorGlow } from "@/components/CursorGlow";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,7 +48,6 @@ export default function RootLayout({
           }}
         />
         <ThemeProvider>
-          <CursorGlow />
           <div className="fixed inset-0 pointer-events-none z-0 orb-glow" aria-hidden />
           {children}
         </ThemeProvider>

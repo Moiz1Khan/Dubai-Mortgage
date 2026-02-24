@@ -103,7 +103,7 @@ export function CaseStudies() {
                 transition={{ duration: 0.4, delay: index * 0.1 }}
                 className={`text-left p-4 md:p-5 rounded-xl border-2 transition-all duration-200 ${
                   selectedIndex === index
-                    ? "border-primary bg-primary/5 shadow-md"
+                    ? "border-primary bg-primary/5"
                     : "border-border bg-card/80 hover:border-primary/40 hover:bg-primary/5"
                 }`}
               >

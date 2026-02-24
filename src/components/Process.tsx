@@ -99,14 +99,14 @@ export function Process() {
 
                 <div className="relative z-10 h-full flex flex-col">
                   <div className="flex items-center gap-4 mb-6">
-                    <span className="font-mono text-sm font-bold text-primary-foreground bg-primary px-3 py-1.5 rounded-lg shrink-0 shadow-lg">
+                    <span className="font-mono text-sm font-bold text-primary-foreground bg-primary px-3 py-1.5 rounded-lg shrink-0">
                       {phase.days}
                     </span>
                     <div>
-                      <h3 className="font-bold text-2xl text-foreground drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                      <h3 className="font-bold text-2xl text-foreground">
                         {phase.title}
                       </h3>
-                      <p className="text-sm text-foreground drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                      <p className="text-sm text-foreground">
                         {phase.subtitle}
                       </p>
                     </div>
@@ -118,10 +118,10 @@ export function Process() {
                         key={idx}
                         className="flex items-start gap-3 text-sm"
                       >
-                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold mt-0.5 shadow-lg">
+                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold mt-0.5">
                           ✓
                         </span>
-                        <span className="text-foreground leading-relaxed font-semibold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                        <span className="text-foreground leading-relaxed font-semibold">
                           {item}
                         </span>
                       </li>
