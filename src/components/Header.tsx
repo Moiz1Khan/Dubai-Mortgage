@@ -12,9 +12,10 @@ const financeItems = [
 ];
 
 const navLinks = [
-  { href: "/#rates", label: "Rates" },
-  { href: "/#calculator", label: "Calculator" },
   { href: "/about", label: "About" },
+  { href: "/#calculator", label: "Calculator" },
+  { href: "/faq", label: "FAQ" },
+  { href: "/contact", label: "Contact Us" },
 ];
 
 export function Header() {
