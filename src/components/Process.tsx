@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { images } from "@/lib/media";
 import ScrollStack, { ScrollStackItem } from "./ScrollStack";
 
 const phases = [
@@ -10,7 +9,7 @@ const phases = [
     days: "Day 1",
     title: "Meet Your Consultant",
     subtitle: "15-minute call. No pressure.",
-    image: images.process[0],
+    image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1772460406/WhatsApp_Image_2026-03-02_at_6.44.54_PM_1_y65paf.jpg",
     items: [
       "You get ONE person. Not a team. Not a department. One mortgage consultant who handles everything from this call until you're holding keys.",
       "They call you within 2 hours of inquiry. You talk. They listen. They tell you honestly if they can help.",
@@ -21,7 +20,7 @@ const phases = [
     days: "Day 2-3",
     title: "Build Your Strategy",
     subtitle: "We prepare everything before submission.",
-    image: images.process[1],
+    image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1772460408/WhatsApp_Image_2026-03-02_at_6.44.54_PM_y5n62h.jpg",
     items: [
       "Review every document before it goes to the banks",
       "Fix issues immediately (not after rejection)",
@@ -34,7 +33,7 @@ const phases = [
     days: "—",
     title: "Bank Submission & Negotiation",
     subtitle: "We submit to multiple lenders simultaneously.",
-    image: images.process[2],
+    image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1772460406/WhatsApp_Image_2026-03-02_at_6.44.54_PM_2_mhie3u.jpg",
     items: [
       "While you wait, we: Handle all bank questions and requests",
       "Negotiate better rates and terms",
@@ -47,7 +46,7 @@ const phases = [
     days: "—",
     title: "Approval & Closing",
     subtitle: "You sign papers and collect keys.",
-    image: images.process[3],
+    image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1772460407/WhatsApp_Image_2026-03-02_at_6.44.53_PM_rkwtgy.jpg",
     items: [
       "We coordinate everything: Bank paperwork",
       "Lawyer appointments",
