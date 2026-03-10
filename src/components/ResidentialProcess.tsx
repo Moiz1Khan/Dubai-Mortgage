@@ -1,14 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { images } from "@/lib/media";
 
 const phases = [
   {
     id: 1,
     days: "Day 1-2",
     title: "Pre-Approval",
-    image: images.process[0],
+    image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163792/1920X1200--Strategy-_-Structure_snu7b2.png",
     items: [
       "15-min call with your consultant",
       "Income verification",
@@ -20,7 +19,7 @@ const phases = [
     id: 2,
     days: "Day 3-5",
     title: "Document Collection",
-    image: images.process[1],
+    image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163791/1920X1200--Documentation_foruhp.png",
     items: [
       "We send checklist",
       "You gather papers",
@@ -32,7 +31,7 @@ const phases = [
     id: 3,
     days: "Day 6-10",
     title: "Bank Review",
-    image: images.process[2],
+    image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163793/1920X1200--Bank-Review_pwkzog.png",
     items: [
       "Submit to multiple lenders",
       "We handle all questions",
@@ -44,7 +43,7 @@ const phases = [
     id: 4,
     days: "Day 11-14",
     title: "Approval & Closing",
-    image: images.process[3],
+    image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163787/1920X1200--Approval-_-Closing_qok373.png",
     items: [
       "Bank approves",
       "Property valuation done",

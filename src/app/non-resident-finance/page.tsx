@@ -10,6 +10,7 @@ import { NonResidentProcess } from "@/components/NonResidentProcess";
 import { NonResidentCaseStudies } from "@/components/NonResidentCaseStudies";
 import { NonResidentRatesTable } from "@/components/NonResidentRatesTable";
 import { NonResidentFAQ } from "@/components/NonResidentFAQ";
+import { images } from "@/lib/media";
 
 const HERO_VIDEO = "https://res.cloudinary.com/dxfejax3u/video/upload/v1770901680/hero-background_asu17w.mp4";
 
@@ -41,20 +42,19 @@ export default function NonResidentFinancePage() {
         <PageLayout>
 
             {/* ── Hero ────────────────────────────────────────────────────────── */}
-            <section className="relative min-h-[85vh] flex items-center overflow-hidden -mt-24">
-                <div className="absolute inset-0 -z-10">
+            <section className="relative min-h-[85vh] flex items-center overflow-hidden -mt-24 isolate">
+                <div className="absolute inset-0 z-0">
                     <Image
-                        src="/media/case-studies/case-study-2.png"
+                        src="https://res.cloudinary.com/dxfejax3u/image/upload/v1773171976/WhatsApp_Image_2026-03-09_at_12.35.15_PM_aosemk.jpg"
                         alt="Dubai Property"
                         fill
                         className="object-cover"
                         priority
                         sizes="100vw"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" />
                 </div>
 
-                <div className="max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-24 relative z-10 w-full">
+                <div className="max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-24 relative z-20 w-full">
                     <div className="max-w-2xl">
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
                             3,847 People Bought Dubai Property While Living Abroad.
@@ -306,8 +306,18 @@ export default function NonResidentFinancePage() {
             </section>
 
             {/* ── Countries We Finance ────────────────────────────────────────── */}
-            <section className="py-20 md:py-28 bg-secondary/30 text-center" data-reveal>
-                <div className="max-w-5xl mx-auto px-4 md:px-8">
+            <section className="relative py-20 md:py-28 overflow-hidden text-center" data-reveal>
+                <div className="absolute inset-0 z-0">
+                    <Image
+                        src={images.nonResidentCountriesBg}
+                        alt=""
+                        fill
+                        className="object-cover"
+                        sizes="100vw"
+                    />
+                    <div className="absolute inset-0 bg-background/0" />
+                </div>
+                <div className="max-w-5xl mx-auto px-4 md:px-8 relative z-10">
                     <h2 className="text-3xl md:text-4xl font-bold mb-6">COUNTRIES WE FINANCE</h2>
                     <div className="flex flex-wrap justify-center gap-3 md:gap-4 mb-10">
                         {countries.map((c) => (

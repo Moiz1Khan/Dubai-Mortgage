@@ -1,13 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import { images } from "@/lib/media";
+
+// Commercial process images (Cloudinary) - aligned with phase titles
+const processImages = [
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163792/1920X1200--Strategy-_-Structure_snu7b2.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163791/1920X1200--Documentation_foruhp.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163793/1920X1200--Bank-Review_pwkzog.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163787/1920X1200--Approval-_-Closing_qok373.png",
+];
 
 const phases = [
     {
         week: "Week 1-2",
         title: "Strategy & Structure",
-        image: images.process[0],
+        image: processImages[0],
         items: [
             "30-min business discussion",
             "Financial analysis",
@@ -19,7 +26,7 @@ const phases = [
     {
         week: "Week 3-4",
         title: "Documentation",
-        image: images.process[1],
+        image: processImages[1],
         items: [
             "Company documents",
             "Financial statements",
@@ -31,7 +38,7 @@ const phases = [
     {
         week: "Week 5-6",
         title: "Bank Review",
-        image: images.process[2],
+        image: processImages[2],
         items: [
             "Submit to select lenders",
             "Property valuation",
@@ -43,7 +50,7 @@ const phases = [
     {
         week: "Week 8-12",
         title: "Approval & Closing",
-        image: images.process[3],
+        image: processImages[3],
         items: [
             "Credit committee approval",
             "Legal documentation",

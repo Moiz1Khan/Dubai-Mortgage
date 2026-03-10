@@ -27,20 +27,19 @@ export default function CommercialFinancePage() {
         <PageLayout>
 
             {/* ── Hero — background image ─────────────────────────── */}
-            <section className="relative min-h-[85vh] flex items-center overflow-hidden -mt-24">
-                <div className="absolute inset-0 -z-10">
+            <section className="relative min-h-[85vh] flex items-center overflow-hidden -mt-24 isolate">
+                <div className="absolute inset-0 z-0">
                     <Image
-                        src="/media/case-studies/case-study-1.png"
+                        src="https://res.cloudinary.com/dxfejax3u/image/upload/v1773169264/WhatsApp_Image_2026-03-09_at_4.25.05_PM_zfr4vo.jpg"
                         alt="Commercial Property"
                         fill
                         className="object-cover"
                         priority
                         sizes="100vw"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/40" />
                 </div>
 
-                <div className="max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-24 relative z-10 w-full">
+                <div className="max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-24 relative z-20 w-full">
                     <div className="max-w-2xl">
                         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
                             AED 2.1 Billion in UAE Commercial Property Financed
@@ -228,8 +227,18 @@ export default function CommercialFinancePage() {
             <CommercialCaseStudies />
             
             {/* ── Calculator Section ──────────────────────────────────────────── */}
-            <section className="py-20 md:py-28 bg-secondary/30" data-reveal>
-                <div className="max-w-4xl mx-auto px-4 md:px-8 text-center">
+            <section className="relative py-20 md:py-28 overflow-hidden" data-reveal>
+                <div className="absolute inset-0 z-0">
+                    <Image
+                        src="https://res.cloudinary.com/dxfejax3u/image/upload/v1773171130/Gemini_Generated_Image_ihvuw5ihvuw5ihvu_uofvyg.png"
+                        alt=""
+                        fill
+                        className="object-cover"
+                        sizes="100vw"
+                    />
+                    <div className="absolute inset-0 bg-background/20" />
+                </div>
+                <div className="max-w-4xl mx-auto px-4 md:px-8 text-center relative z-10">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4">
                         Does Your Property Cash Flow Work?
                     </h2>

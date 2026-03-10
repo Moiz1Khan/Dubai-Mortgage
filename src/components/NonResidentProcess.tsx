@@ -7,7 +7,7 @@ const phases = [
     {
         id: 1,
         title: "Pre-Approval (100% Remote)",
-        image: images.process[0],
+        image: images.nonResidentProcess[0],
         items: [
             "Video consultation (your timezone)",
             "International income verification",
@@ -19,7 +19,7 @@ const phases = [
     {
         id: 2,
         title: "Property Selection (Mostly Remote)",
-        image: images.process[1],
+        image: images.nonResidentProcess[1],
         items: [
             "Agent sends property videos",
             "Virtual tours",
@@ -31,7 +31,7 @@ const phases = [
     {
         id: 3,
         title: "Mortgage Processing (100% Remote)",
-        image: images.process[2],
+        image: images.nonResidentProcess[2],
         items: [
             "Final application submission",
             "Bank review and approval",
@@ -43,7 +43,7 @@ const phases = [
     {
         id: 4,
         title: "Your UAE Visit (2-3 Days Only)",
-        image: images.process[3],
+        image: images.nonResidentProcess[3],
         items: [
             "Fly to Dubai",
             "Day 1: Sign mortgage documents",
