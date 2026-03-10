@@ -82,9 +82,10 @@ export function CaseStudies() {
       ref={sectionRef}
       className="py-10 md:py-14 bg-transparent relative min-h-[400px] md:min-h-[520px]"
       data-reveal
+      data-green-glow
     >
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-2">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-2 green-underline">
           Case Studies
         </h2>
         <p className="text-muted-foreground text-center mb-8">

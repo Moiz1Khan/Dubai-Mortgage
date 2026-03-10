@@ -19,9 +19,9 @@ const cols = [
 
 export function ComparisonSection() {
   return (
-    <section className="py-10 md:py-14 bg-transparent" data-reveal>
+    <section className="py-10 md:py-14 bg-transparent" data-reveal data-green-glow>
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-2">
+        <h2 className="text-2xl md:text-3xl font-bold text-center mb-2 green-underline">
           Tired of Being Treated Like Application #4,729?
         </h2>
         <p className="text-muted-foreground text-center mb-10 max-w-2xl mx-auto">

@@ -45,6 +45,16 @@ export function ScrollAnimations() {
             });
           }
 
+          // Add green glow effect for sections with data-green-glow
+          if (el.dataset.greenGlow !== undefined) {
+            el.classList.add("visible");
+            // Also trigger green underline animations within this section
+            const greenUnderlines = el.querySelectorAll<HTMLElement>(".green-underline");
+            greenUnderlines.forEach((underline) => {
+              underline.classList.add("visible");
+            });
+          }
+
           io.unobserve(el); // fire only once
         });
       },
@@ -52,13 +62,16 @@ export function ScrollAnimations() {
     );
 
     // Seed initial hidden state via JS so SSR HTML is visible without JS
-    document.querySelectorAll<HTMLElement>("[data-reveal], [data-scale-in], [data-stagger]").forEach((el) => {
+    document.querySelectorAll<HTMLElement>("[data-reveal], [data-scale-in], [data-stagger], [data-green-glow]").forEach((el) => {
       if (el.dataset.reveal !== undefined) el.classList.add("reveal-enter");
       if (el.dataset.scaleIn !== undefined) el.classList.add("scale-in-enter");
       if (el.dataset.stagger !== undefined) {
         el.querySelectorAll<HTMLElement>("[data-stagger-item]").forEach((item) => {
           item.classList.add("reveal-enter");
         });
+      }
+      if (el.dataset.greenGlow !== undefined) {
+        el.classList.add("section-green-glow");
       }
       io.observe(el);
     });

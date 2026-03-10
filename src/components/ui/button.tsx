@@ -38,7 +38,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <button
-        className={cn(classes, "transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shine-sweep")}
+        className={cn(classes, "transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shine-sweep btn-green-accent")}
         ref={ref}
         {...props}
       >

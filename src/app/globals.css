@@ -18,6 +18,9 @@
   --ring: #28303a;
   --glass: rgba(255, 255, 255, 0.9);
   --glass-border: rgba(0, 0, 0, 0.08);
+  --green-accent: #22c55e;
+  --green-accent-dark: #16a34a;
+  --green-accent-light: #4ade80;
 }
 
 .dark {
@@ -308,15 +311,27 @@ body {
   background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(40,48,58,0.06), transparent);
 }
 
-/* Scroll progress bar */
+/* Scroll progress bar - Green accent */
 .scroll-progress {
   position: fixed;
   top: 0;
   left: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--primary), var(--muted));
+  height: 3px;
+  background: linear-gradient(90deg, var(--green-accent-dark), var(--green-accent), var(--green-accent-light));
+  background-size: 200% 100%;
   z-index: 100;
   transform-origin: left;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5), 0 0 20px rgba(34, 197, 94, 0.3);
+  animation: scroll-progress-shine 3s ease infinite;
+}
+
+@keyframes scroll-progress-shine {
+  0%, 100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -355,6 +370,109 @@ body {
 .scale-in-enter.scale-in-visible {
   opacity: 1;
   transform: scale(1);
+}
+
+/* ─── Green Accent Styles ─── */
+
+/* Green underline animation for headings */
+.green-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.green-underline::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--green-accent-dark), var(--green-accent), var(--green-accent-light));
+  border-radius: 2px;
+  transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+}
+
+/* Trigger animation when section is revealed */
+[data-reveal].reveal-visible .green-underline::after,
+[data-green-glow].visible .green-underline::after,
+.green-underline.reveal-visible::after,
+.green-underline.visible::after {
+  width: 100%;
+}
+
+/* Green glow on scroll for sections */
+[data-green-glow] {
+  position: relative;
+}
+
+[data-green-glow]::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, transparent 0%, rgba(34, 197, 94, 0.08) 50%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 12px;
+}
+
+[data-green-glow].visible::before,
+[data-green-glow].reveal-visible::before {
+  opacity: 1;
+}
+
+/* Ensure content stays above glow */
+[data-green-glow] > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Green hover accent for buttons */
+.btn-green-accent {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-green-accent::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(34, 197, 94, 0.1) 50%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn-green-accent:hover::before {
+  opacity: 1;
+}
+
+.btn-green-accent::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--green-accent);
+  transition: width 0.3s ease;
+}
+
+.btn-green-accent:hover::after {
+  width: 80%;
+}
+
+/* Green border accent on hover for cards */
+.card-green-accent {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-green-accent:hover {
+  border-color: rgba(34, 197, 94, 0.3);
+  box-shadow: 0 4px 20px rgba(34, 197, 94, 0.15);
 }
 
 

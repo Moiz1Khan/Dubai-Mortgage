@@ -1,28 +1,27 @@
 "use client";
 
 import Image from "next/image";
-import { images } from "@/lib/media";
 import { Button } from "@/components/ui/button";
 
 const team = [
   {
     name: "Chandan Murthy",
     role: "Senior Mortgage Consultant",
-    image: images.team[0],
+    image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154800/Chandan_Murthy_ohcusf.png",
     bio: "8 years in banking. Former senior underwriter at Emirates NBD. Left because he was tired of rejecting good people for bad reasons.",
     win: "Secured AED 8.5M commercial loan for a client rejected by 3 banks",
   },
   {
     name: "Maryam Hany",
     role: "Non-Resident Specialist",
-    image: images.team[1],
+    image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154838/Maryam_Hany_db3ft4.png",
     bio: "UK expat who bought a Dubai property in 2019 while living in London. Knows exactly how confusing international buying is. Helped 327+ overseas buyers.",
     win: "London investor bought 3 Dubai properties worth AED 5.5M remotely",
   },
   {
     name: "Jazib Saeed",
     role: "Senior Mortgage Consultant",
-    image: images.team[2],
+    image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1773155352/Screenshot_2026-03-10_200846_p1l7zu.png",
     bio: "10 years in real estate finance. Former bank underwriter. Knows what makes banks say yes before you even apply.",
     win: "Approved client on probation for AED 1.2M in 11 days",
   },

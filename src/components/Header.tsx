@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { throttle } from "@/lib/utils";
 
@@ -36,8 +37,6 @@ export function Header() {
   const overVideo = !scrolled;
   const navBg = overVideo ? "bg-white/10 backdrop-blur-md border-white/20" : "bg-[#e7edf5]/95 backdrop-blur-md border-gray-200/60 shadow-lg";
   const textClass = overVideo ? "text-white" : "text-foreground";
-  const logoBg = overVideo ? "bg-black" : "bg-foreground";
-  const logoText = overVideo ? "text-white" : "text-background";
   const linkHover = overVideo ? "hover:bg-white/10" : "hover:bg-black/5";
   const btnClass = overVideo
     ? "bg-[#28303a] text-white border-transparent shadow-[0_4px_14px_rgba(0,0,0,0.3)] hover:bg-[#323d48] hover:shadow-[0_6px_18px_rgba(0,0,0,0.35)]"
@@ -62,11 +61,15 @@ export function Header() {
       <nav className={`max-w-6xl mx-auto flex items-center justify-between gap-4 px-4 md:px-6 py-3 rounded-2xl border transition-all duration-300 ${navBg}`}>
 
         {/* Logo */}
-        <Link href="/" className="flex items-center shrink-0 gap-2">
-          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${logoBg}`}>
-            <span className={`font-bold text-sm ${logoText}`}>N</span>
-          </div>
-          <span className={`font-bold text-lg ${textClass}`}>NexHome</span>
+        <Link href="/" className="flex items-center shrink-0">
+          <Image
+            src="https://res.cloudinary.com/dxfejax3u/image/upload/v1773153203/Full_Logo_kzokcw.png"
+            alt="NexHome Logo"
+            width={120}
+            height={40}
+            className="h-8 w-auto object-contain"
+            priority
+          />
         </Link>
 
         {/* Center Nav */}

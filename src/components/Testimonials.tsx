@@ -31,7 +31,7 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="py-10 md:py-14 relative overflow-hidden bg-transparent" data-reveal>
+    <section className="py-10 md:py-14 relative overflow-hidden bg-transparent" data-reveal data-green-glow>
       <div className="absolute inset-0">
         <Image
           src="https://res.cloudinary.com/dxfejax3u/image/upload/v1772461361/WhatsApp_Image_2026-03-02_at_7.21.57_PM_tlunpz.jpg"
@@ -43,7 +43,7 @@ export function Testimonials() {
       </div>
       <div className="relative max-w-7xl mx-auto px-4 md:px-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 green-underline">
             Tried. Tested. Trusted.
           </h2>
           <div className="flex items-center justify-center gap-2 mb-2">
@@ -61,7 +61,7 @@ export function Testimonials() {
             <motion.div
               key={t.name}
               data-stagger-item
-              className="border-gradient-wrap shine-sweep bg-card/95 backdrop-blur border border-border rounded-2xl p-6 overflow-hidden"
+              className="border-gradient-wrap shine-sweep bg-card/95 backdrop-blur border border-border rounded-2xl p-6 overflow-hidden card-green-accent"
             >
               <Quote className="size-8 text-primary/30 mb-4" />
               <p className="text-foreground mb-6">&quot;{t.quote}&quot;</p>
