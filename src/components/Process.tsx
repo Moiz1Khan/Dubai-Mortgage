@@ -108,7 +108,7 @@ export function Process() {
               return (
                 <div
                   key={phase.id}
-                  ref={(el) => (phaseRefs.current[index] = el)}
+                  ref={(el) => { phaseRefs.current[index] = el; }}
                   className={`group relative transition-all duration-700 ${
                     isActive ? "scale-105" : "scale-100 opacity-70"
                   }`}
@@ -210,7 +210,7 @@ export function Process() {
             return (
               <div
                 key={phase.id}
-                ref={(el) => (phaseRefs.current[index] = el)}
+                ref={(el) => { phaseRefs.current[index] = el; }}
                 className={`relative rounded-2xl overflow-hidden border-2 transition-all duration-500 card-green-accent ${
                   isActive
                     ? "border-green-500/50 shadow-xl shadow-green-500/20"
