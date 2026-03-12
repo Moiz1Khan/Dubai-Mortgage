@@ -2,13 +2,14 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { images } from "@/lib/media";
 
 export function AboutHero() {
   return (
     <section className="relative min-h-[70vh] flex items-center overflow-hidden">
       <div className="absolute inset-0 -z-10">
         <Image
-          src="https://res.cloudinary.com/dxfejax3u/image/upload/v1771955053/Gemini_Generated_Image_6hdi2c6hdi2c6hdi_z4lred.png"
+          src={images.aboutHeroBg}
           alt="About Credit Link"
           fill
           className="object-cover"

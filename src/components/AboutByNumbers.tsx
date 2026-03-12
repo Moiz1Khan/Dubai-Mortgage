@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { images } from "@/lib/media";
 
 const stats = [
   { value: 17243, suffix: "", label: "Mortgages approved", format: "number" },
@@ -74,7 +75,7 @@ export function AboutByNumbers() {
       {/* Background Image */}
       <div className="absolute inset-0 -z-10">
         <Image
-          src="https://res.cloudinary.com/dxfejax3u/image/upload/v1771955079/Gemini_Generated_Image_m0rbnim0rbnim0rb_srw5uj.png"
+          src={images.aboutByNumbersBg}
           alt="Background"
           fill
           className="object-cover"

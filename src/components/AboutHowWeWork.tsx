@@ -17,7 +17,7 @@ const steps = [
       "Exact timeline",
     ],
     footer: "If we can't help, we say so immediately and tell you what needs to change.",
-    image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1771955066/Gemini_Generated_Image_evuustevuustevuu_nskhbx.png",
+    image: images.process[0],
   },
   {
     id: 2,
@@ -30,7 +30,7 @@ const steps = [
       "Only submit when we know you'll get approved",
     ],
     footer: "This is why our approval rate is 92%.",
-    image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1771955066/Gemini_Generated_Image_evuustevuustevuu_nskhbx.png",
+    image: images.process[1],
   },
   {
     id: 3,
@@ -43,7 +43,7 @@ const steps = [
       "Flexible terms",
     ],
     footer: "Banks give us better deals because we bring them volume (17,243 mortgages since 2015).",
-    image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1771955066/Gemini_Generated_Image_evuustevuustevuu_nskhbx.png",
+    image: images.process[2],
   },
   {
     id: 4,

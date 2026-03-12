@@ -8,7 +8,7 @@ import { images } from "@/lib/media";
 const teamMembers = Array.from({ length: 16 }, (_, i) => ({
   name: "",
   designation: "",
-  image: images.team[i % 3], // Cycle through available images
+  image: images.team[i],
 }));
 
 export function AboutTeam() {

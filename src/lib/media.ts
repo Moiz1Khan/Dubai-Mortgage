@@ -5,11 +5,14 @@ export const images = {
   concierge: "/media/concierge/concierge-main.png",
   testimonialBg: "/media/testimonials/testimonial-background.png",
   process: [
-    "/media/process/phase-1-pre-approval.png",
-    "/media/process/phase-2-document-collection.png",
-    "/media/process/phase-3-bank-review.png",
-    "/media/process/phase-4-approval-closing.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163792/1920X1200--Strategy-_-Structure_snu7b2.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163791/1920X1200--Documentation_foruhp.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163793/1920X1200--Bank-Review_pwkzog.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163787/1920X1200--Approval-_-Closing_qok373.png",
   ],
+  // About page hero and "By Numbers" backgrounds (use working Cloudinary URLs)
+  aboutHeroBg: "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163792/1920X1200--Strategy-_-Structure_snu7b2.png",
+  aboutByNumbersBg: "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163793/1920X1200--Bank-Review_pwkzog.png",
   // Non-resident "Countries We Finance" section background
   nonResidentCountriesBg:
     "https://res.cloudinary.com/dxfejax3u/image/upload/v1773173993/Gemini_Generated_Image_2rwkjh2rwkjh2rwk_j0lxkg.png",
@@ -31,9 +34,23 @@ export const images = {
     "/media/blog/blog-3-fixed-vs-variable.png",
   ],
   team: [
-    "/media/team/avatar-james.png",
-    "/media/team/avatar-sarah.png",
-    "/media/team/avatar-omar.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154800/Chandan_Murthy_ohcusf.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154838/Maryam_Hany_db3ft4.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773155352/Screenshot_2026-03-10_200846_p1l7zu.png",
+    // Placeholders 4–16 – replace with your team Cloudinary URLs when ready
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154910/Vignesh_Raja_Murugesan_tg78px.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154852/Shiraz_Khan_jjfjxe.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154850/Niyum_Peguv_hbqure.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154850/Sherif_Elhosary_c2jmaf.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154849/Muhammad_Umar_pb8snd.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154845/Mehran_Younas_jppmf1.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154845/Nitin_Shet_uuodli.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154844/Muhammed_Ismail_uftnfj.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154843/Mohammad_Faraz_x4gdl7.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154801/Demie_Ong_pb1adn.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154801/Aya_doae5z.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154799/Anum_Justin_rhicqx.png",
+    "https://res.cloudinary.com/dxfejax3u/image/upload/v1773154798/Arslan_Riaz_kzvxlh.png",
   ],
   pressLogos: [
     "/media/logos/arabian-business.png",
