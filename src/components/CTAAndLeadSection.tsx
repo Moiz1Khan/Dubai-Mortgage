@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
 type Interest = "purchase" | "refinance" | "renovation" | "";
@@ -12,10 +11,37 @@ export function CTAAndLeadSection() {
   const [phone, setPhone] = useState("");
   const [interest, setInterest] = useState<Interest>("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    setSubmitError("");
+    try {
+      const response = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          source: "cta-quote-form",
+          financingType: interest || undefined,
+          name,
+          email,
+          mobile: phone,
+        }),
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || "Failed to submit quote request.");
+      }
+      setSubmitted(true);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error ? error.message : "Failed to submit quote request."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (submitted) {
@@ -36,13 +62,7 @@ export function CTAAndLeadSection() {
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
           {/* Left: Ready to own your Dubai home? */}
-          <motion.div
-            className="text-center lg:text-left"
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-          >
+          <div className="text-center lg:text-left">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
               Ready to own your
               <br />
@@ -59,15 +79,10 @@ export function CTAAndLeadSection() {
                 <a href="#contact">Get My Exact Rate Quote</a>
               </Button>
             </div>
-          </motion.div>
+          </div>
 
           {/* Right: Get Your Exact Rate Quote form */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-          >
+          <div>
             <h2 className="text-2xl md:text-3xl font-bold mb-2 text-center lg:text-left">
               Get Your Exact Rate Quote
             </h2>
@@ -135,11 +150,12 @@ export function CTAAndLeadSection() {
                   ))}
                 </div>
               </div>
-              <Button type="submit" className="w-full" size="lg">
-                Get My Quote
+              <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+                {submitting ? "Submitting..." : "Get My Quote"}
               </Button>
+              {submitError && <p className="text-sm text-red-600">{submitError}</p>}
             </form>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

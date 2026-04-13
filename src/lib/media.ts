@@ -10,9 +10,8 @@ export const images = {
     "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163793/1920X1200--Bank-Review_pwkzog.png",
     "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163787/1920X1200--Approval-_-Closing_qok373.png",
   ],
-  // About page hero and "By Numbers" backgrounds (use working Cloudinary URLs)
+  // About page hero background
   aboutHeroBg: "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163792/1920X1200--Strategy-_-Structure_snu7b2.png",
-  aboutByNumbersBg: "https://res.cloudinary.com/dxfejax3u/image/upload/v1773163793/1920X1200--Bank-Review_pwkzog.png",
   // Non-resident "Countries We Finance" section background
   nonResidentCountriesBg:
     "https://res.cloudinary.com/dxfejax3u/image/upload/v1773173993/Gemini_Generated_Image_2rwkjh2rwkjh2rwk_j0lxkg.png",

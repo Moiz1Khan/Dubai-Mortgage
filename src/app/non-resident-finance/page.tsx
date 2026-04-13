@@ -1,18 +1,16 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight, Globe, CheckCircle2, TrendingUp, FileText, BadgePercent, Plane, Calculator } from "lucide-react";
+import { Globe, TrendingUp, FileText, BadgePercent, Plane } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { Button } from "@/components/ui/button";
 import { NonResidentProcess } from "@/components/NonResidentProcess";
 import { NonResidentCaseStudies } from "@/components/NonResidentCaseStudies";
 import { NonResidentRatesTable } from "@/components/NonResidentRatesTable";
 import { NonResidentFAQ } from "@/components/NonResidentFAQ";
+import { ContactForm } from "@/components/ContactForm";
+import { ChecklistGetStartedCard } from "@/components/ChecklistGetStartedCard";
 import { images } from "@/lib/media";
-
-const HERO_VIDEO = "https://res.cloudinary.com/dxfejax3u/video/upload/v1770901680/hero-background_asu17w.mp4";
 
 const countries = [
     { name: "United Kingdom", flag: "🇬🇧" },
@@ -29,15 +27,6 @@ const countries = [
 ];
 
 export default function NonResidentFinancePage() {
-    const videoRef = useRef<HTMLVideoElement>(null);
-
-    useEffect(() => {
-        const video = videoRef.current;
-        if (!video) return;
-        video.muted = true;
-        video.play().catch(() => { });
-    }, []);
-
     return (
         <PageLayout>
 
@@ -82,44 +71,6 @@ export default function NonResidentFinancePage() {
                 </div>
             </section>
 
-            {/* Old video hero code removed */}
-            <section className="hidden relative min-h-screen flex items-center justify-center overflow-hidden -mt-24">
-                <video
-                    ref={videoRef}
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="auto"
-                    className="absolute inset-0 w-full h-full object-cover"
-                >
-                    <source src={HERO_VIDEO} type="video/mp4" />
-                </video>
-                <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/60" />
-
-                <div className="relative z-10 max-w-4xl mx-auto px-4 md:px-8 text-center" data-animate="hero">
-                    <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-5">
-                        Main Banner
-                    </p>
-                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-10 drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)]">
-                        3,847 People Bought Dubai Property While Living Abroad.<br />
-                        <span className="text-primary">You Could Be Next!</span>
-                    </h1>
-                    <div className="w-16 h-px bg-white/30 mx-auto mb-10" />
-                    <p className="text-xl md:text-2xl font-bold text-white mb-3 drop-shadow-[0_1px_8px_rgba(0,0,0,0.4)]">
-                        Buy UAE Property from Anywhere in the World
-                    </p>
-                    <p className="text-base md:text-lg text-gray-200 leading-relaxed max-w-2xl mx-auto">
-                        We Handle Everything Remotely.
-                    </p>
-                    <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-                        <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-white border-none">
-                            <a href="#contact">Get Pre-Approved Remotely</a>
-                        </Button>
-                    </div>
-                </div>
-            </section>
-
             <NonResidentProcess />
 
             {/* ── Eligibility Table ───────────────────────────────────────────── */}
@@ -146,7 +97,7 @@ export default function NonResidentFinancePage() {
                                     { req: "Max Age at Maturity", min: "65 years", ideal: "Under 60 preferred" },
                                     { req: "Credit History", min: "No major defaults", ideal: "Clean record" },
                                     { req: "Employment", min: "6 months minimum", ideal: "2+ years stable" },
-                                ].map((row, i) => (
+                                ].map((row) => (
                                     <tr key={row.req} className="border-t border-border/50 hover:bg-secondary/20 transition-colors">
                                         <td className="p-4 md:p-5 font-semibold text-foreground">{row.req}</td>
                                         <td className="p-4 md:p-5 text-muted-foreground">{row.min}</td>
@@ -217,16 +168,7 @@ export default function NonResidentFinancePage() {
                             </div>
                         </div>
 
-                        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 text-center lg:w-[320px] lg:mt-10">
-                            <FileText className="size-16 text-white mx-auto mb-6 opacity-80" />
-                            <h3 className="text-2xl font-bold mb-2">Download PDF</h3>
-                            <p className="text-white/70 mb-8">
-                                Get the complete non-resident checklist to ensure you&apos;re ready.
-                            </p>
-                            <Button size="lg" className="w-full bg-white text-primary hover:bg-white/90">
-                                Complete Non-Resident Checklist PDF
-                            </Button>
-                        </div>
+                        <ChecklistGetStartedCard variant="non-resident" className="lg:mt-10" />
                     </div>
                 </div>
             </section>
@@ -343,6 +285,10 @@ export default function NonResidentFinancePage() {
 
             <NonResidentCaseStudies />
             <NonResidentRatesTable />
+            <section id="contact" className="scroll-mt-24">
+                <ContactForm />
+            </section>
+
             <NonResidentFAQ />
 
         </PageLayout>

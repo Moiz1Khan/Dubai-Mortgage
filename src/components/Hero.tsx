@@ -3,11 +3,13 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { useSiteContentSection } from "@/lib/useSiteContent";
 
 const HERO_VIDEO = "https://res.cloudinary.com/dxfejax3u/video/upload/v1770901680/hero-background_asu17w.mp4";
 
 export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const content = useSiteContentSection("home");
 
   useEffect(() => {
     const video = videoRef.current;
@@ -28,7 +30,7 @@ export function Hero() {
             muted
             loop
             playsInline
-            preload="auto"
+            preload="metadata"
             className="absolute inset-0 w-full h-full object-cover scale-110"
           >
             <source src={HERO_VIDEO} type="video/mp4" />
@@ -40,7 +42,7 @@ export function Hero() {
 
       <div className="relative z-10 max-w-4xl text-left" data-animate="hero">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.15] drop-shadow-[0_2px_20px_rgba(0,0,0,0.5)]">
-          Get Your Dubai Mortgage Approved in 7 Days
+          {content.heroTitle}
         </h1>
         <motion.p
           className="mt-5 text-xl md:text-2xl font-semibold text-white"
@@ -48,7 +50,7 @@ export function Hero() {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, delay: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
-          Even If 3 Banks Already Rejected You
+          {content.heroSubtitle}
         </motion.p>
         <motion.p
           className="mt-6 text-base md:text-lg text-gray-200 max-w-2xl leading-relaxed"
@@ -56,7 +58,7 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
-          Get Pre-Approved in 24 Hours
+          {content.heroDescription}
           <br />
           <span className="text-white font-medium">Free Consultation. No Credit Check.</span>
         </motion.p>

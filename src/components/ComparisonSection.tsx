@@ -2,6 +2,7 @@
 
 import { Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSiteContentSection } from "@/lib/useSiteContent";
 
 const rows = [
   { traditional: "6-8 week approval times", digital: "Algorithms don't understand your situation", credit: "7-14 day approvals" },
@@ -18,62 +19,62 @@ const cols = [
 ];
 
 export function ComparisonSection() {
+  const content = useSiteContentSection("home");
   return (
     <section className="py-10 md:py-14 bg-transparent" data-reveal data-green-glow>
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <h2 className="text-2xl md:text-3xl font-bold text-center mb-2 green-underline">
-          Tired of Being Treated Like Application #4,729?
-        </h2>
-        <p className="text-muted-foreground text-center mb-10 max-w-2xl mx-auto">
-          See why more buyers choose a human consultant over algorithms and call centers.
-        </p>
+        <div className="text-center mb-10">
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3">
+            <span className="green-underline inline-block">{content.comparisonTitle}</span>
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            {content.comparisonSubtitle}
+          </p>
+        </div>
 
-        <div className="overflow-x-auto">
-          <div className="grid grid-cols-3 min-w-[600px] gap-0 border border-border rounded-2xl overflow-hidden bg-card">
-            {cols.map((col) => (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+          {cols.map((col) => (
+            <div
+              key={col.key}
+              className={cn(
+                "rounded-2xl border p-6 shadow-sm",
+                col.isCredit
+                  ? "bg-[#14284a] border-[#2c4f7f] text-white"
+                  : "bg-card border-border"
+              )}
+            >
               <div
-                key={col.key}
                 className={cn(
-                  "p-4 md:p-6 border-b border-border last:border-b-0",
-                  col.isCredit && "bg-primary/5 border-l border-r border-primary/20"
+                  "font-extrabold text-xl mb-5",
+                  col.isCredit ? "text-white" : "text-foreground"
                 )}
               >
-                <h3
-                  className={cn(
-                    "font-bold text-sm md:text-base mb-4",
-                    col.isCredit ? "text-primary" : "text-foreground"
-                  )}
-                >
-                  {col.label}
-                </h3>
-                <div className="space-y-3">
-                  {rows.map((row, i) => {
-                    const val = row[col.key];
-                    const isCheck = col.isCredit;
-                    return (
-                      <div
-                        key={i}
-                        className="flex items-start gap-2 text-sm"
-                      >
-                        {isCheck ? (
-                          <Check className="size-4 text-primary shrink-0 mt-0.5" />
-                        ) : (
-                          <X className="size-4 text-red-500 shrink-0 mt-0.5" />
-                        )}
-                        <span
-                          className={cn(
-                            isCheck ? "text-foreground" : "text-muted-foreground"
-                          )}
-                        >
-                          {val}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
+                {col.label}
               </div>
-            ))}
-          </div>
+              <div className="space-y-3.5">
+                {rows.map((row, i) => {
+                  const val = row[col.key];
+                  const isCheck = col.isCredit;
+                  return (
+                    <div key={i} className="flex items-start gap-2.5 text-sm md:text-base">
+                      {isCheck ? (
+                        <Check className="size-4 text-teal-400 shrink-0 mt-0.5" />
+                      ) : (
+                        <X className="size-4 text-red-400 shrink-0 mt-0.5" />
+                      )}
+                      <span
+                        className={cn(
+                          isCheck ? "text-white/95" : "text-muted-foreground"
+                        )}
+                      >
+                        {val}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>

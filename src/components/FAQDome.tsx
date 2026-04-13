@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useCallback, useState } from "react";
+import { useEffect, useMemo, useRef, useCallback } from "react";
 import { useDrag } from "@use-gesture/react";
-import { cn } from "@/lib/utils";
 
 const faqs = [
   { q: "How much can I borrow?", a: "General rule: 7x your annual salary. But max monthly debt can't exceed 50% of gross income. Example: AED 25,000 salary = roughly AED 1.8M borrowing capacity." },
@@ -59,9 +58,6 @@ export function FAQDome() {
   const startRotRef = useRef({ x: 0, y: 0 });
   const draggingRef = useRef(false);
   const inertiaRAF = useRef<number | null>(null);
-
-  const [question, setQuestion] = useState("");
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "success">("idle");
 
   const items = useMemo(() => buildItems(SEGMENTS), []);
 
@@ -145,6 +141,17 @@ export function FAQDome() {
     { target: mainRef, eventOptions: { passive: false } }
   );
 
+  const closeFAQ = useCallback(() => {
+    const ov = overlayRef.current;
+    if (ov) {
+      ov.classList.remove("faq-enlarge-visible");
+      ov.onclick = null;
+      setTimeout(() => ov.remove(), 280);
+      overlayRef.current = null;
+    }
+    rootRef.current?.removeAttribute("data-enlarging");
+  }, []);
+
   const openFAQ = useCallback((item: ItemDef) => {
     const overlay = document.createElement("div");
     overlay.className = "faq-enlarge-overlay";
@@ -159,18 +166,7 @@ export function FAQDome() {
     scrimRef.current?.parentElement?.appendChild(overlay);
     requestAnimationFrame(() => overlay.classList.add("faq-enlarge-visible"));
     rootRef.current?.setAttribute("data-enlarging", "true");
-  }, []);
-
-  const closeFAQ = useCallback(() => {
-    const ov = overlayRef.current;
-    if (ov) {
-      ov.classList.remove("faq-enlarge-visible");
-      ov.onclick = null;
-      setTimeout(() => ov.remove(), 280);
-      overlayRef.current = null;
-    }
-    rootRef.current?.removeAttribute("data-enlarging");
-  }, []);
+  }, [closeFAQ]);
 
   useEffect(() => {
     const scrim = scrimRef.current;
@@ -186,13 +182,6 @@ export function FAQDome() {
       window.removeEventListener("keydown", onKey);
     };
   }, [closeFAQ]);
-
-  const handleSubmitQuestion = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!question.trim()) return;
-    setSubmitStatus("success");
-    setQuestion("");
-  };
 
   return (
     <section id="faq" className="py-10 md:py-14 bg-transparent" data-reveal>

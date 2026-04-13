@@ -10,7 +10,6 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", asChild, children, ...props }, ref) => {
-    const Comp = asChild ? "span" : "button";
     const classes = cn(
       "inline-flex items-center justify-center font-medium transition-all duration-200 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 cursor-pointer relative overflow-hidden shadow-[0_4px_14px_rgba(0,0,0,0.2)]",
       {
@@ -38,7 +37,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     return (
       <button
-        className={cn(classes, "transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shine-sweep btn-green-accent")}
+        className={cn(classes, "transition-[color,background-color,border-color,box-shadow,opacity] duration-200")}
         ref={ref}
         {...props}
       >

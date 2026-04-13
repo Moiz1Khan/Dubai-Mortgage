@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { motion, useInView } from "framer-motion";
 import { images } from "@/lib/media";
 
 const CardSwap = dynamic(
@@ -69,8 +68,24 @@ const caseStudies = [
 export function CaseStudies() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const cardSwapRef = useRef<{ goToCard: (index: number) => void }>(null);
-  const sectionRef = useRef(null);
-  const isInView = useInView(sectionRef, { once: true, amount: 0.2 });
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [isInView, setIsInView] = useState(false);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e?.isIntersecting) {
+          setIsInView(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.2 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   const handleSelect = (index: number) => {
     setSelectedIndex(index);
@@ -95,13 +110,10 @@ export function CaseStudies() {
         <div className="relative grid grid-cols-[1fr_1fr] gap-4 md:gap-8 items-center min-h-[420px] md:min-h-[480px]">
           <div className="flex flex-col gap-3 md:gap-4 min-w-0">
             {caseStudies.map((study, index) => (
-              <motion.button
+              <button
                 key={study.person}
                 type="button"
                 onClick={() => handleSelect(index)}
-                initial={{ opacity: 0, x: -20 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
                 className={`text-left p-4 md:p-5 rounded-xl border-2 transition-all duration-200 ${
                   selectedIndex === index
                     ? "border-primary bg-primary/5"
@@ -112,20 +124,11 @@ export function CaseStudies() {
                   {study.title}
                 </h3>
                 <p className="text-sm text-muted-foreground">{study.person}</p>
-              </motion.button>
+              </button>
             ))}
           </div>
 
-          <motion.div
-            className="relative h-[380px] md:h-[480px] min-w-0 flex items-end justify-end overflow-visible"
-            initial={{ opacity: 0, scale: 0.9, x: 30 }}
-            animate={
-              isInView
-                ? { opacity: 1, scale: 1, x: 0 }
-                : { opacity: 0, scale: 0.9, x: 30 }
-            }
-            transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-          >
+          <div className="relative h-[380px] md:h-[480px] min-w-0 flex items-end justify-end overflow-visible">
             {isInView && (
             <CardSwap
               ref={cardSwapRef}
@@ -182,7 +185,7 @@ export function CaseStudies() {
               ))}
             </CardSwap>
             )}
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

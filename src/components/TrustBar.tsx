@@ -56,7 +56,7 @@ export function TrustBar() {
   }, []);
 
   return (
-    <section className="py-8 md:py-10 border-b border-border/50 bg-transparent overflow-hidden">
+    <section className="py-8 md:py-10 border-b border-border/50 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <h3 className="text-center text-lg md:text-xl font-semibold text-foreground mb-6">
           We work with the best banks in the United Arab Emirates.

@@ -1,394 +1,471 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
+  CheckCircle2,
   FileText,
+  Globe,
+  Loader2,
+  Megaphone,
   Plus,
-  Pencil,
-  ImageIcon,
-  X,
+  Save,
   Trash2,
 } from "lucide-react";
+import { defaultSiteContent, type SiteContent } from "@/lib/siteContent";
+import {
+  createEmptyBlogPost,
+  defaultManagedBlogs,
+  type ManagedBlogPost,
+} from "@/lib/blogStore";
+import { mergeSiteContent } from "@/lib/contentMapper";
+import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { refreshManagedBlogsFromApi } from "@/lib/useManagedBlogs";
+import { refreshSiteContentFromApi } from "@/lib/useSiteContent";
 
-export type BlogPost = {
-  id: string;
-  title: string;
-  description: string;
+const pageMeta: {
+  key: keyof SiteContent;
   label: string;
-  slug: string;
-  image?: string;
-  createdAt?: string;
-};
-
-const initialBlogs: BlogPost[] = [
+  description: string;
+}[] = [
+  { key: "home", label: "Home Page", description: "Homepage hero, comparison, and blog section placeholders." },
+  { key: "residentialFinance", label: "Residential Finance", description: "Residential page headings and core section titles." },
+  { key: "commercialFinance", label: "Commercial Finance", description: "Commercial page hero and section headings." },
+  { key: "nonResidentFinance", label: "Non-Resident Finance", description: "Non-resident hero and major section headings." },
+  { key: "about", label: "About Page", description: "About hero and key informational section titles." },
+  { key: "blog", label: "Blog Page", description: "Blog page hero heading and subtitle." },
+  { key: "faq", label: "FAQ Page", description: "FAQ hero heading and subtitle content." },
   {
-    id: "1",
-    title: "First-Time Buyer Guide",
+    key: "contact",
+    label: "Contact Page",
     description:
-      "Everything you need to know before applying for your first UAE home loan.",
-    label: "Guides",
-    slug: "first-time-buyer-guide",
-    createdAt: "2025-01-15",
+      "Hero, map heading, officeAddressLine1/2, mapQuery (Google embed), supportEmail, officeHoursLine1/2.",
   },
-  {
-    id: "2",
-    title: "Self-Employed Mortgages",
-    description:
-      "Proven strategies to get approved with variable income.",
-    label: "Tips",
-    slug: "self-employed-mortgages",
-    createdAt: "2025-01-12",
-  },
-  {
-    id: "3",
-    title: "Fixed vs Variable Rates",
-    description:
-      "Compare pros and cons to make an informed decision for your mortgage.",
-    label: "Rates",
-    slug: "fixed-vs-variable-rates",
-    createdAt: "2025-01-10",
-  },
-  {
-    id: "4",
-    title: "Dubai Property Market 2025",
-    description:
-      "Latest trends and what to expect when buying in the UAE.",
-    label: "Market",
-    slug: "dubai-property-market-2025",
-    createdAt: "2025-01-08",
-  },
-  {
-    id: "5",
-    title: "Down Payment Strategies",
-    description:
-      "How to save for your 20% down payment faster.",
-    label: "Savings",
-    slug: "down-payment-strategies",
-    createdAt: "2025-01-05",
-  },
-  {
-    id: "6",
-    title: "Refinancing Your Loan",
-    description:
-      "When and how to refinance for better rates.",
-    label: "Refinance",
-    slug: "refinancing-your-loan",
-    createdAt: "2025-01-02",
-  },
+  { key: "footer", label: "Global Footer", description: "Brand name, phone, whatsappNumber (digits only, e.g. 971501234567), hours, and location." },
 ];
 
-const LABEL_OPTIONS = ["Guides", "Tips", "Rates", "Market", "Savings", "Refinance"];
-
-function slugify(text: string) {
-  return text
+function slugify(value: string) {
+  return value
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+function uniqueSlug(baseSlug: string, blogs: ManagedBlogPost[]) {
+  const normalized = slugify(baseSlug) || "new-blog-post";
+  if (!blogs.some((blog) => blog.slug === normalized)) return normalized;
+  let counter = 2;
+  while (blogs.some((blog) => blog.slug === `${normalized}-${counter}`)) {
+    counter += 1;
+  }
+  return `${normalized}-${counter}`;
+}
+
+async function getAdminToken() {
+  const supabase = getSupabaseBrowserClient();
+  if (!supabase) return "";
+  const { data } = await supabase.auth.getSession();
+  return data.session?.access_token ?? "";
 }
 
 export default function AdminContentPage() {
-  const [blogs, setBlogs] = useState<BlogPost[]>(initialBlogs);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingBlog, setEditingBlog] = useState<BlogPost | null>(null);
-  const [form, setForm] = useState<Partial<BlogPost>>({
-    title: "",
-    description: "",
-    label: "",
-    slug: "",
-  });
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [selectedPage, setSelectedPage] = useState<keyof SiteContent>("home");
+  const [siteContent, setSiteContent] = useState<SiteContent>(() => structuredClone(defaultSiteContent));
+  const [blogs, setBlogs] = useState<ManagedBlogPost[]>([]);
+  const [selectedBlogSlug, setSelectedBlogSlug] = useState<string>("");
+  const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-  function openAddModal() {
-    setEditingBlog(null);
-    setForm({ title: "", description: "", label: "", slug: "" });
-    setImagePreview(null);
-    setIsModalOpen(true);
-  }
+  useEffect(() => {
+    async function loadAdminData() {
+      setLoading(true);
+      setSaveError("");
+      try {
+        const token = await getAdminToken();
+        if (!token) {
+          setSaveError("Admin session missing. Sign in after configuring Supabase env values.");
+          setBlogs(defaultManagedBlogs);
+          setSelectedBlogSlug(defaultManagedBlogs[0]?.slug ?? "");
+          return;
+        }
+        const [contentRes, blogsRes] = await Promise.all([
+          fetch("/api/admin/content", {
+            headers: { Authorization: `Bearer ${token}` },
+            cache: "no-store",
+          }),
+          fetch("/api/admin/blogs", {
+            headers: { Authorization: `Bearer ${token}` },
+            cache: "no-store",
+          }),
+        ]);
 
-  function openEditModal(blog: BlogPost) {
-    setEditingBlog(blog);
-    setForm({
-      title: blog.title,
-      description: blog.description,
-      label: blog.label,
-      slug: blog.slug,
-    });
-    setImagePreview(blog.image ?? null);
-    setIsModalOpen(true);
-  }
+        if (contentRes.ok) {
+          const contentData = (await contentRes.json()) as { content?: Partial<SiteContent> };
+          if (contentData.content) {
+            setSiteContent(mergeSiteContent(contentData.content));
+          }
+        }
+        if (blogsRes.ok) {
+          const blogsData = (await blogsRes.json()) as { blogs?: ManagedBlogPost[] };
+          const nextBlogs = blogsData.blogs?.length ? blogsData.blogs : defaultManagedBlogs;
+          setBlogs(nextBlogs);
+          setSelectedBlogSlug(nextBlogs[0]?.slug ?? "");
+        } else {
+          setBlogs(defaultManagedBlogs);
+          setSelectedBlogSlug(defaultManagedBlogs[0]?.slug ?? "");
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
 
-  function closeModal() {
-    setIsModalOpen(false);
-    setEditingBlog(null);
-    setForm({ title: "", description: "", label: "", slug: "" });
-    setImagePreview(null);
-  }
+    void loadAdminData();
+  }, []);
 
-  function handleTitleChange(value: string) {
-    setForm((prev) => ({
+  const fields = useMemo(
+    () =>
+      Object.entries(siteContent[selectedPage]) as Array<
+        [keyof SiteContent[typeof selectedPage], string]
+      >,
+    [selectedPage, siteContent]
+  );
+
+  const selectedBlog = useMemo(
+    () => blogs.find((blog) => blog.slug === selectedBlogSlug) ?? blogs[0],
+    [blogs, selectedBlogSlug]
+  );
+
+  function updateField(field: string, value: string) {
+    setSiteContent((prev) => ({
       ...prev,
-      title: value,
-      slug: prev?.slug === (prev?.title && slugify(prev.title)) ? slugify(value) : prev?.slug,
+      [selectedPage]: {
+        ...prev[selectedPage],
+        [field]: value,
+      },
     }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!form.title || !form.description || !form.label) return;
+  function updateBlog(targetSlug: string, patch: Partial<ManagedBlogPost>) {
+    setBlogs((prev) => prev.map((blog) => (blog.slug === targetSlug ? { ...blog, ...patch } : blog)));
+  }
 
-    const slug = form.slug || slugify(form.title);
-    const payload = { ...form, slug, image: imagePreview ?? undefined };
+  function updateBlogSlug(currentSlug: string, nextSlugInput: string) {
+    setBlogs((prev) => {
+      const nextSlug = uniqueSlug(nextSlugInput, prev.filter((blog) => blog.slug !== currentSlug));
+      setSelectedBlogSlug(nextSlug);
+      return prev.map((blog) => (blog.slug === currentSlug ? { ...blog, slug: nextSlug } : blog));
+    });
+  }
 
-    if (editingBlog) {
-      setBlogs((prev) =>
-        prev.map((b) =>
-          b.id === editingBlog.id ? { ...b, ...payload, id: b.id } : b
-        )
-      );
-    } else {
-      setBlogs((prev) => [
-        ...prev,
-        {
-          ...payload,
-          id: crypto.randomUUID(),
-          createdAt: new Date().toISOString().slice(0, 10),
-        } as BlogPost,
+  function createBlog() {
+    setBlogs((prev) => {
+      const nextSlug = uniqueSlug("new-blog-post", prev);
+      const next = [createEmptyBlogPost(nextSlug), ...prev];
+      setSelectedBlogSlug(nextSlug);
+      return next;
+    });
+  }
+
+  function deleteBlog(slug: string) {
+    setBlogs((prev) => {
+      const filtered = prev.filter((blog) => blog.slug !== slug);
+      setSelectedBlogSlug(filtered[0]?.slug ?? "");
+      return filtered;
+    });
+  }
+
+  async function saveAll() {
+    setSaving(true);
+    setSaveError("");
+    try {
+      const token = await getAdminToken();
+      if (!token) {
+        throw new Error("Admin session missing. Sign in and try again.");
+      }
+      const [contentRes, blogsRes] = await Promise.all([
+        fetch("/api/admin/content", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ content: siteContent }),
+        }),
+        fetch("/api/admin/blogs", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ blogs }),
+        }),
       ]);
+      if (!contentRes.ok || !blogsRes.ok) {
+        const contentErr = !contentRes.ok ? await contentRes.text() : "";
+        const blogsErr = !blogsRes.ok ? await blogsRes.text() : "";
+        throw new Error(contentErr || blogsErr || "Failed to save data.");
+      }
+      await Promise.all([refreshSiteContentFromApi(), refreshManagedBlogsFromApi()]);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 1400);
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "Failed to save changes.");
+    } finally {
+      setSaving(false);
     }
-    closeModal();
   }
 
-  function handleDelete(id: string) {
-    if (confirm("Delete this blog post?")) {
-      setBlogs((prev) => prev.filter((b) => b.id !== id));
-    }
-  }
-
-  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => setImagePreview(reader.result as string);
-    reader.readAsDataURL(file);
+  if (loading) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-6 text-muted-foreground inline-flex items-center gap-2">
+        <Loader2 className="size-4 animate-spin" />
+        Loading content studio...
+      </div>
+    );
   }
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold mb-1">Content</h2>
-          <p className="text-muted-foreground text-sm">
-            Manage your blog posts for the website.
+          <h2 className="text-2xl font-bold mb-2">Content Studio</h2>
+          <p className="text-muted-foreground">
+            Edit all major page sections and fully manage blog content.
           </p>
         </div>
         <button
-          onClick={openAddModal}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity shrink-0"
+          onClick={saveAll}
+          disabled={saving}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-opacity disabled:opacity-60"
         >
-          <Plus className="size-5" />
-          Add New Blog
+          {saving ? <Loader2 className="size-4 animate-spin" /> : <Save className="size-4" />}
+          {saving ? "Saving..." : "Save Changes"}
         </button>
       </div>
 
-      {/* Blog section */}
-      <div className="border border-border rounded-xl overflow-hidden bg-card">
-        <div className="px-6 py-4 border-b border-border bg-secondary/20">
-          <h3 className="font-semibold flex items-center gap-2">
-            <FileText className="size-5 text-primary" />
-            Blog Posts
-          </h3>
-          <p className="text-sm text-muted-foreground mt-1">
-            {blogs.length} post{blogs.length !== 1 ? "s" : ""} • These appear in the blog section on the main site
-          </p>
+      {saved && (
+        <div className="rounded-xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-green-700 text-sm inline-flex items-center gap-2">
+          <CheckCircle2 className="size-4" />
+          Saved successfully. Content and blog data are now updated.
         </div>
-        <div className="p-6">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {blogs.map((blog) => (
-              <div
-                key={blog.id}
-                className="border border-border rounded-xl p-5 hover:border-primary/30 transition-colors group"
+      )}
+      {saveError && (
+        <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-red-700 text-sm">
+          {saveError}
+        </div>
+      )}
+
+      <div className="grid lg:grid-cols-[300px_1fr] gap-6">
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <h3 className="font-semibold mb-3 flex items-center gap-2">
+            <Globe className="size-4 text-primary" />
+            Edit Content
+          </h3>
+          <div className="space-y-2 max-h-[620px] overflow-auto">
+            {pageMeta.map((page) => (
+              <button
+                key={page.key}
+                onClick={() => setSelectedPage(page.key)}
+                className={`w-full text-left rounded-xl px-3 py-3 border transition-colors ${
+                  selectedPage === page.key
+                    ? "border-primary/40 bg-primary/10"
+                    : "border-border hover:border-primary/20"
+                }`}
               >
-                <div className="flex justify-between items-start gap-3 mb-3">
-                  <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-primary/10 text-primary">
-                    {blog.label}
-                  </span>
-                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={() => openEditModal(blog)}
-                      className="p-1.5 rounded-lg hover:bg-secondary/50 text-muted-foreground hover:text-foreground"
-                      title="Edit"
-                    >
-                      <Pencil className="size-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(blog.id)}
-                      className="p-1.5 rounded-lg hover:bg-red-500/10 text-muted-foreground hover:text-red-500"
-                      title="Delete"
-                    >
-                      <Trash2 className="size-4" />
-                    </button>
-                  </div>
-                </div>
-                <h4 className="font-semibold mb-1.5 line-clamp-2">{blog.title}</h4>
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                  {blog.description}
-                </p>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>/blog/{blog.slug}</span>
-                  {blog.createdAt && (
-                    <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
-                  )}
-                </div>
+                <p className="font-medium text-sm">{page.label}</p>
+                <p className="text-xs text-muted-foreground mt-1">{page.description}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-border bg-card p-5 md:p-6">
+          <h3 className="font-semibold text-lg mb-5">
+            {pageMeta.find((p) => p.key === selectedPage)?.label} Placeholders
+          </h3>
+          <div className="grid gap-4 max-h-[620px] overflow-auto pr-1">
+            {fields.map(([field, value]) => (
+              <div key={String(field)}>
+                <label className="block text-sm font-medium mb-2 capitalize">
+                  {String(field).replace(/([A-Z])/g, " $1")}
+                </label>
+                <textarea
+                  value={value}
+                  onChange={(e) => updateField(String(field), e.target.value)}
+                  className="w-full min-h-[82px] px-4 py-3 rounded-xl bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary resize-y"
+                />
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Add / Edit Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={closeModal}
-            aria-hidden
-          />
-          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-card border border-border rounded-2xl shadow-xl">
-            <div className="sticky top-0 px-6 py-4 border-b border-border bg-card flex items-center justify-between">
-              <h3 className="font-semibold text-lg">
-                {editingBlog ? "Edit Blog Post" : "Add New Blog Post"}
-              </h3>
+      <div className="rounded-2xl border border-border bg-card p-5 md:p-6 space-y-5">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <h3 className="font-semibold text-lg flex items-center gap-2">
+            <Megaphone className="size-4 text-primary" />
+            Blog Manager
+          </h3>
+          <button
+            onClick={createBlog}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            <Plus className="size-4" />
+            Create New Blog
+          </button>
+        </div>
+
+        <div className="grid lg:grid-cols-[320px_1fr] gap-5">
+          <div className="space-y-2 max-h-[560px] overflow-auto pr-1">
+            {blogs.map((post) => (
               <button
-                onClick={closeModal}
-                className="p-2 rounded-lg hover:bg-secondary/50 text-muted-foreground"
+                key={post.slug}
+                onClick={() => setSelectedBlogSlug(post.slug)}
+                className={`w-full text-left rounded-xl border px-3 py-3 transition-colors ${
+                  selectedBlog?.slug === post.slug
+                    ? "border-primary/40 bg-primary/10"
+                    : "border-border hover:border-primary/20"
+                }`}
               >
-                <X className="size-5" />
+                <p className="text-sm font-semibold line-clamp-1">{post.title}</p>
+                <p className="text-xs text-muted-foreground line-clamp-1 mt-1">/blog/{post.slug}</p>
+                <p className="text-[11px] mt-2">{post.published ? "Published" : "Draft"} - {post.publishedAt}</p>
               </button>
-            </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-5">
-              {/* Image upload */}
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Featured Image
-                </label>
-                <div className="relative border-2 border-dashed border-border rounded-xl p-6 flex flex-col items-center justify-center gap-2 hover:border-primary/30 transition-colors min-h-[140px]">
-                  {imagePreview ? (
-                    <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-secondary/30">
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        className="w-full h-full object-cover"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setImagePreview(null)}
-                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/50 text-white hover:bg-black/70"
-                      >
-                        <X className="size-4" />
-                      </button>
-                    </div>
-                  ) : (
-                    <>
-                      <ImageIcon className="size-10 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">
-                        Click to upload or drag and drop
-                      </span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer rounded-xl"
-                      />
-                    </>
-                  )}
+            ))}
+            {blogs.length === 0 && (
+              <div className="rounded-xl border border-border px-3 py-4 text-sm text-muted-foreground">
+                No blogs found. Create your first blog post.
+              </div>
+            )}
+          </div>
+
+          <div className="rounded-xl border border-border p-4 md:p-5 space-y-4">
+            {selectedBlog ? (
+              <>
+                <div className="flex items-center justify-between gap-3">
+                  <p className="font-semibold text-sm">Editing Blog Post</p>
+                  <button
+                    onClick={() => deleteBlog(selectedBlog.slug)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-red-500/30 text-red-600 text-xs hover:bg-red-500/10 transition-colors"
+                  >
+                    <Trash2 className="size-3.5" />
+                    Delete
+                  </button>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1.5">
-                  PNG, JPG up to 2MB. Backend integration coming soon.
-                </p>
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">Title *</label>
-                <input
-                  type="text"
-                  value={form.title ?? ""}
-                  onChange={(e) => handleTitleChange(e.target.value)}
-                  placeholder="e.g. First-Time Buyer Guide"
-                  className="w-full h-11 px-4 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary"
-                  required
-                />
-              </div>
+                <div className="grid md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">Title</label>
+                    <input
+                      value={selectedBlog.title}
+                      onChange={(e) => updateBlog(selectedBlog.slug, { title: e.target.value })}
+                      className="w-full h-10 px-3 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">Slug</label>
+                    <input
+                      value={selectedBlog.slug}
+                      onChange={(e) => updateBlogSlug(selectedBlog.slug, e.target.value)}
+                      className="w-full h-10 px-3 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                    />
+                  </div>
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Description *
-                </label>
-                <textarea
-                  value={form.description ?? ""}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, description: e.target.value }))
-                  }
-                  placeholder="Brief summary for the blog card..."
-                  rows={3}
-                  className="w-full px-4 py-3 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-                  required
-                />
-              </div>
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">Excerpt</label>
+                  <textarea
+                    value={selectedBlog.excerpt}
+                    onChange={(e) => updateBlog(selectedBlog.slug, { excerpt: e.target.value })}
+                    className="w-full min-h-[72px] px-3 py-2 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary text-sm resize-y"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">Label *</label>
-                <select
-                  value={form.label ?? ""}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, label: e.target.value }))
-                  }
-                  className="w-full h-11 px-4 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary"
-                  required
-                >
-                  <option value="">Select a label</option>
-                  {LABEL_OPTIONS.map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                <div className="grid md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">Category</label>
+                    <input
+                      value={selectedBlog.category}
+                      onChange={(e) => updateBlog(selectedBlog.slug, { category: e.target.value })}
+                      className="w-full h-10 px-3 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">Read Time</label>
+                    <input
+                      value={selectedBlog.readTime}
+                      onChange={(e) => updateBlog(selectedBlog.slug, { readTime: e.target.value })}
+                      className="w-full h-10 px-3 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                    />
+                  </div>
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">URL Slug</label>
-                <input
-                  type="text"
-                  value={form.slug ?? ""}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, slug: e.target.value }))
-                  }
-                  placeholder="auto-generated from title"
-                  className="w-full h-11 px-4 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary"
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  /blog/[slug]
-                </p>
-              </div>
+                <div className="grid md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">Publish Date</label>
+                    <input
+                      type="date"
+                      value={selectedBlog.publishedAt}
+                      onChange={(e) => updateBlog(selectedBlog.slug, { publishedAt: e.target.value })}
+                      className="w-full h-10 px-3 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                    />
+                  </div>
+                  <label className="inline-flex items-center gap-2 text-sm pt-6">
+                    <input
+                      type="checkbox"
+                      checked={selectedBlog.published}
+                      onChange={(e) => updateBlog(selectedBlog.slug, { published: e.target.checked })}
+                    />
+                    Published
+                  </label>
+                </div>
 
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={closeModal}
-                  className="flex-1 h-11 rounded-lg border border-border font-medium hover:bg-secondary/30 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 h-11 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity"
-                >
-                  {editingBlog ? "Save Changes" : "Create Post"}
-                </button>
-              </div>
-            </form>
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">Image URL</label>
+                  <input
+                    value={selectedBlog.image}
+                    onChange={(e) => updateBlog(selectedBlog.slug, { image: e.target.value })}
+                    className="w-full h-10 px-3 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">Keywords</label>
+                  <input
+                    value={selectedBlog.keywords}
+                    onChange={(e) => updateBlog(selectedBlog.slug, { keywords: e.target.value })}
+                    placeholder="dubai mortgage, uae home loan..."
+                    className="w-full h-10 px-3 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-muted-foreground mb-1">Blog Content (one paragraph per line)</label>
+                  <textarea
+                    value={selectedBlog.content.join("\n")}
+                    onChange={(e) =>
+                      updateBlog(selectedBlog.slug, {
+                        content: e.target.value.split("\n").map((line) => line.trim()).filter(Boolean),
+                      })
+                    }
+                    className="w-full min-h-[180px] px-3 py-2 rounded-lg bg-background border border-border focus:outline-none focus:ring-2 focus:ring-primary text-sm resize-y"
+                  />
+                </div>
+              </>
+            ) : (
+              <div className="text-sm text-muted-foreground">Select or create a blog post to edit.</div>
+            )}
           </div>
         </div>
-      )}
+
+        <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+          <FileText className="size-3.5" />
+          Blog list, homepage cards, and blog detail pages are all driven by this manager.
+        </p>
+      </div>
     </div>
   );
 }

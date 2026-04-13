@@ -1,28 +1,17 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight, Building2, Briefcase, Hammer, TrendingUp, CheckCircle2, XCircle, FileText, Calculator } from "lucide-react";
+import { Building2, Briefcase, Hammer, TrendingUp, CheckCircle2, XCircle, FileText, Calculator } from "lucide-react";
 import { PageLayout } from "@/components/PageLayout";
 import { Button } from "@/components/ui/button";
 import { CommercialProcess } from "@/components/CommercialProcess";
 import { CommercialCaseStudies } from "@/components/CommercialCaseStudies";
 import { CommercialRatesTable } from "@/components/CommercialRatesTable";
 import { CommercialFAQ } from "@/components/CommercialFAQ";
-
-const HERO_VIDEO = "https://res.cloudinary.com/dxfejax3u/video/upload/v1770901680/hero-background_asu17w.mp4";
+import { ContactForm } from "@/components/ContactForm";
+import { ChecklistGetStartedCard } from "@/components/ChecklistGetStartedCard";
 
 export default function CommercialFinancePage() {
-    const videoRef = useRef<HTMLVideoElement>(null);
-
-    useEffect(() => {
-        const video = videoRef.current;
-        if (!video) return;
-        video.muted = true;
-        video.play().catch(() => { });
-    }, []);
-
     return (
         <PageLayout>
 
@@ -100,7 +89,7 @@ export default function CommercialFinancePage() {
                                 subtitle: "Build Your Commercial Real Estate Portfolio.",
                                 desc: "Purchase income-generating properties for long-term wealth building and rental income.",
                             },
-                        ].map((item, i) => (
+                        ].map((item) => (
                             <div
                                 key={item.title}
                                 className="group p-8 rounded-2xl bg-card border border-border border-gradient-wrap hover:shadow-lg transition-all duration-300"
@@ -316,18 +305,13 @@ export default function CommercialFinancePage() {
                             </div>
                         </div>
 
-                        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 text-center lg:w-[320px]">
-                            <FileText className="size-16 text-white mx-auto mb-6 opacity-80" />
-                            <h3 className="text-2xl font-bold mb-2">Download PDF</h3>
-                            <p className="text-white/70 mb-8">
-                                Get the complete commercial checklist to ensure you&apos;re ready.
-                            </p>
-                            <Button size="lg" className="w-full bg-white text-primary hover:bg-white/90">
-                                Complete Commercial Checklist PDF
-                            </Button>
-                        </div>
+                        <ChecklistGetStartedCard variant="commercial" />
                     </div>
                 </div>
+            </section>
+
+            <section id="contact" className="scroll-mt-24">
+                <ContactForm />
             </section>
 
             <CommercialFAQ />

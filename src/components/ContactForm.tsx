@@ -3,8 +3,43 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Mail, Phone, MessageSquare } from "lucide-react";
+import { useSiteContentSection } from "@/lib/useSiteContent";
+
+function digitsOnly(value: string): string {
+  return value.replace(/\D/g, "");
+}
+
+/** Shown when env + CMS digits are missing or stale (CMS often overrides footer.phone). */
+const DEFAULT_WHATSAPP_DIGITS = "971585378607";
+const DEFAULT_QUICK_CONTACT_HOURS =
+  "Monday to Friday: 9:00 AM – 6:00 PM · Saturday and Sunday: Closed";
+
+function formatAeMobileDisplay(digits: string): string {
+  const d = digitsOnly(digits);
+  if (d.length === 12 && d.startsWith("971")) {
+    return `+971 ${d.slice(3, 5)} ${d.slice(5, 8)} ${d.slice(8)}`;
+  }
+  if (d.length >= 8) return `+${d}`;
+  return "+971 58 537 8607";
+}
+
+const WHATSAPP_PREFILL = encodeURIComponent(
+  "Hi, I'm reaching out from the Credit Link contact page."
+);
 
 export function ContactForm() {
+  const footer = useSiteContentSection("footer");
+  const contact = useSiteContentSection("contact");
+  const envWa = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "";
+  const waDigits = digitsOnly(envWa || footer.whatsappNumber || DEFAULT_WHATSAPP_DIGITS);
+  const displayPhone = formatAeMobileDisplay(waDigits);
+  const phoneTel = `+${waDigits}`;
+  const supportEmail = contact.supportEmail?.trim() || "info@creditlink.ae";
+  const waHref = `https://wa.me/${waDigits}?text=${WHATSAPP_PREFILL}`;
+  const callHoursSubtext =
+    [contact.officeHoursLine1, contact.officeHoursLine2].filter((line) => line?.trim()).join(" · ") ||
+    footer.hours?.trim() ||
+    DEFAULT_QUICK_CONTACT_HOURS;
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,15 +48,46 @@ export function ContactForm() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    // Reset after 3 seconds
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
-    }, 3000);
+    setSubmitting(true);
+    setError("");
+    try {
+      const response = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          source: "contact-page-form",
+          name: formData.name,
+          email: formData.email,
+          mobile: formData.phone,
+          metadata: {
+            subject: formData.subject,
+            message: formData.message,
+          },
+        }),
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || "Failed to submit contact form.");
+      }
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
+      }, 3000);
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : "Failed to submit contact form."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) {
@@ -34,7 +100,7 @@ export function ContactForm() {
             </div>
             <h2 className="text-2xl md:text-3xl font-bold mb-4">Thank You!</h2>
             <p className="text-muted-foreground">
-              We've received your message and will get back to you within 2 hours.
+              We&apos;ve received your message and will get back to you within 2 hours.
             </p>
           </div>
         </div>
@@ -104,9 +170,10 @@ export function ContactForm() {
                   placeholder="Tell us more about your inquiry..."
                 />
               </div>
-              <Button type="submit" size="lg" className="w-full">
-                Send Message
+              <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+                {submitting ? "Sending..." : "Send Message"}
               </Button>
+              {error && <p className="text-sm text-red-600">{error}</p>}
             </form>
           </div>
 
@@ -121,43 +188,48 @@ export function ContactForm() {
 
             <div className="space-y-4">
               <a
-                href="tel:+971501234567"
-                className="flex items-start gap-4 p-6 bg-card border border-border rounded-xl hover:border-primary/40 hover:shadow-md transition-all group"
+                href={`tel:${phoneTel}`}
+                className="group flex items-start gap-4 rounded-xl border border-border bg-card p-6 transition-all hover:border-primary/40 hover:shadow-md"
               >
-                <div className="p-3 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                <div className="rounded-lg bg-primary/10 p-3 transition-colors group-hover:bg-primary/20">
                   <Phone className="size-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1">Call Us</h3>
-                  <p className="text-sm text-muted-foreground">+971 50 123 4567</p>
-                  <p className="text-xs text-muted-foreground mt-1">Mon-Fri, 9 AM - 6 PM GST</p>
+                  <h3 className="mb-1 font-semibold text-foreground">Call Us</h3>
+                  <p className="text-sm text-muted-foreground">{displayPhone}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{callHoursSubtext}</p>
                 </div>
               </a>
 
               <a
-                href="mailto:info@nexhome.com"
-                className="flex items-start gap-4 p-6 bg-card border border-border rounded-xl hover:border-primary/40 hover:shadow-md transition-all group"
+                href={`mailto:${supportEmail}`}
+                className="group flex items-start gap-4 rounded-xl border border-border bg-card p-6 transition-all hover:border-primary/40 hover:shadow-md"
               >
-                <div className="p-3 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                <div className="rounded-lg bg-primary/10 p-3 transition-colors group-hover:bg-primary/20">
                   <Mail className="size-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1">Email Us</h3>
-                  <p className="text-sm text-muted-foreground">info@nexhome.com</p>
-                  <p className="text-xs text-muted-foreground mt-1">We reply within 2 hours</p>
+                  <h3 className="mb-1 font-semibold text-foreground">Email Us</h3>
+                  <p className="text-sm text-muted-foreground">{supportEmail}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">We reply within 2 hours</p>
                 </div>
               </a>
 
-              <div className="flex items-start gap-4 p-6 bg-card border border-border rounded-xl">
-                <div className="p-3 rounded-lg bg-primary/10">
+              <a
+                href={waHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group flex items-start gap-4 rounded-xl border border-border bg-card p-6 transition-all hover:border-primary/40 hover:shadow-md"
+              >
+                <div className="rounded-lg bg-primary/10 p-3 transition-colors group-hover:bg-primary/20">
                   <MessageSquare className="size-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1">WhatsApp</h3>
-                  <p className="text-sm text-muted-foreground">+971 50 123 4567</p>
-                  <p className="text-xs text-muted-foreground mt-1">Available 24/7</p>
+                  <h3 className="mb-1 font-semibold text-foreground">WhatsApp</h3>
+                  <p className="text-sm text-muted-foreground">{displayPhone}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Tap to chat on WhatsApp</p>
                 </div>
-              </div>
+              </a>
             </div>
           </div>
         </div>

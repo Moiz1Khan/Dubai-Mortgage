@@ -3,7 +3,14 @@
 /* Heyflow-inspired: Clean, light, professional SaaS theme */
 :root {
   --background: #f8f9fa;
-  --background-gradient: linear-gradient(to bottom, #8B9FD9 0%, #9CADDD 8%, #B8C4E8 15%, #D8DEF2 22%, #EEF0F9 30%, #FAFAFC 45%, #FFFFFF 70%, #FFFFFF 100%);
+  --background-gradient: linear-gradient(
+    to bottom,
+    #ffffff 0%,
+    #fbfcfe 18%,
+    #f7f9fc 40%,
+    #ffffff 75%,
+    #ffffff 100%
+  );
   --foreground: #000000;
   --muted: #1f2937;
   --muted-foreground: #1f2937;
@@ -76,10 +83,18 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
 }
 
+/* Keep section-level main headings visually consistent site-wide */
+section > h2,
+section > div > h2,
+section > div > div > h2 {
+  text-align: center;
+  font-weight: 800;
+}
+
 /* Theme gradient - only applied below the hero video */
 .theme-gradient {
   background: var(--background-gradient);
-  background-attachment: fixed;
+  background-attachment: scroll;
 }
 
 /* Glass effect utility */
@@ -104,6 +119,28 @@ body {
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Scroll-triggered section reveal (used by LazySection; GPU-friendly opacity + transform) */
+.scroll-reveal-section {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition:
+    opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.scroll-reveal-section.scroll-reveal-section--shown {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal-section {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 /* Custom scrollbar */
@@ -267,25 +304,6 @@ body {
   50% { background-position: 100% 50%; }
 }
 
-/* Shine sweep on hover */
-.shine-sweep {
-  position: relative;
-  overflow: hidden;
-}
-.shine-sweep::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(105deg, transparent 40%, rgba(40,48,58,0.06) 45%, rgba(40,48,58,0.12) 50%, rgba(40,48,58,0.06) 55%, transparent 60%);
-  background-size: 200% 100%;
-  transform: translateX(-100%);
-  transition: transform 0.6s ease;
-}
-.shine-sweep:hover::after {
-  transform: translateX(100%);
-}
-
 /* Grid overlay - subtle background */
 .grid-overlay {
   background-image:
@@ -303,6 +321,7 @@ body {
   position: absolute;
   inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity: 0.35;
   pointer-events: none;
 }
 
@@ -318,20 +337,9 @@ body {
   left: 0;
   height: 3px;
   background: linear-gradient(90deg, var(--green-accent-dark), var(--green-accent), var(--green-accent-light));
-  background-size: 200% 100%;
   z-index: 100;
   transform-origin: left;
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.5), 0 0 20px rgba(34, 197, 94, 0.3);
-  animation: scroll-progress-shine 3s ease infinite;
-}
-
-@keyframes scroll-progress-shine {
-  0%, 100% {
-    background-position: 0% center;
-  }
-  50% {
-    background-position: 100% center;
-  }
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.35);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -343,6 +351,12 @@ body {
   .border-gradient-wrap::before,
   .text-gradient-accent {
     animation: none !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .noise-overlay::after {
+    display: none;
   }
 }
 
@@ -377,7 +391,9 @@ body {
 /* Green underline animation for headings */
 .green-underline {
   position: relative;
-  display: inline-block;
+  display: block;
+  width: fit-content;
+  margin-inline: auto;
 }
 
 .green-underline::after {
@@ -428,41 +444,6 @@ body {
 [data-green-glow] > * {
   position: relative;
   z-index: 1;
-}
-
-/* Green hover accent for buttons */
-.btn-green-accent {
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-green-accent::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, transparent 0%, rgba(34, 197, 94, 0.1) 50%, transparent 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.btn-green-accent:hover::before {
-  opacity: 1;
-}
-
-.btn-green-accent::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 2px;
-  background: var(--green-accent);
-  transition: width 0.3s ease;
-}
-
-.btn-green-accent:hover::after {
-  width: 80%;
 }
 
 /* Green border accent on hover for cards */

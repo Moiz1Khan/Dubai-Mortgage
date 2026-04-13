@@ -1,5 +1,7 @@
 "use client";
 
+import { CircleHelp } from "lucide-react";
+
 const faqs = [
   {
     q: "How long have you been in business?",
@@ -41,14 +43,27 @@ export function AboutFAQ() {
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-card border border-border rounded-2xl p-6 hover:border-primary/30 transition-all"
+              className="bg-card border border-border rounded-2xl p-6 shadow-sm hover:border-primary/25 hover:shadow-md transition-all"
             >
-              <h4 className="font-semibold text-foreground mb-3 text-base">
-                {faq.q}
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {faq.a}
-              </p>
+              <div className="flex gap-4">
+                <div
+                  className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg bg-[#f0f0f0] border border-[#e6e6e6]"
+                  aria-hidden
+                >
+                  <CircleHelp
+                    className="size-5 text-[#2d3748]"
+                    strokeWidth={1.75}
+                  />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="font-semibold text-foreground mb-3 text-base">
+                    {faq.q}
+                  </h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {faq.a}
+                  </p>
+                </div>
+              </div>
             </div>
           ))}
         </div>

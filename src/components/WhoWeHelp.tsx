@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
+import { WhoWeHelpBottomRightAccent, WhoWeHelpTopLeftAccent } from "@/components/WhoWeHelpImageAccents";
 
 const profiles = [
   {
@@ -107,7 +108,25 @@ export function WhoWeHelp() {
 
           {/* Right side - Sticky image that changes */}
           <div className="relative lg:sticky lg:top-24 h-[60vh] hidden lg:block">
-            <div className="relative w-full h-full rounded-2xl overflow-hidden">
+            {/* Corner accents: EIBOR-style trend (TL) + home / trust / liquidity (BR) */}
+            <div
+              className="pointer-events-none absolute -top-4 -left-4 z-0 h-[5.25rem] w-[5.25rem] sm:h-28 sm:w-28"
+              aria-hidden
+            >
+              <div className="flex h-full w-full items-center justify-center rounded-2xl border-2 border-[#c5d0e0] bg-card/95 p-3 shadow-sm backdrop-blur-sm dark:border-slate-600 dark:bg-card/90">
+                <WhoWeHelpTopLeftAccent className="h-[4.25rem] w-[4.25rem] sm:h-[5.25rem] sm:w-[5.25rem]" />
+              </div>
+            </div>
+            <div
+              className="pointer-events-none absolute -bottom-5 -right-5 z-0 h-[5.75rem] w-[5.75rem] sm:h-32 sm:w-32"
+              aria-hidden
+            >
+              <div className="flex h-full w-full items-center justify-center rounded-2xl border border-white/80 bg-white/80 p-3 shadow-sm backdrop-blur-sm dark:border-slate-600/70 dark:bg-slate-800/80">
+                <WhoWeHelpBottomRightAccent className="h-[4.5rem] w-[4.5rem] sm:h-[5.75rem] sm:w-[5.75rem]" />
+              </div>
+            </div>
+
+            <div className="relative z-10 h-full w-full overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/[0.06] dark:ring-white/10">
               {profiles.map((profile, index) => (
                 <div
                   key={profile.id}

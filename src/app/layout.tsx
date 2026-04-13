@@ -3,6 +3,9 @@ import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { RatesAccessProvider } from "@/lib/ratesAccess";
+import { ScrollToHash } from "@/components/ScrollToHash";
+import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,8 +51,12 @@ export default function RootLayout({
           }}
         />
         <ThemeProvider>
-          <div className="fixed inset-0 pointer-events-none z-0 orb-glow" aria-hidden />
-          {children}
+          <RatesAccessProvider>
+            <ScrollToHash />
+            <div className="fixed inset-0 pointer-events-none z-0 orb-glow" aria-hidden />
+            {children}
+            <FloatingWhatsApp />
+          </RatesAccessProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -40,7 +39,7 @@ export function NonResidentFAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="py-10 md:py-14 bg-transparent" data-reveal>
+    <section className="py-10 md:py-14 bg-transparent">
       <div className="max-w-6xl mx-auto px-4 md:px-8">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold mb-3">
@@ -58,13 +57,13 @@ export function NonResidentFAQSection() {
               className={cn(
                 "bg-card border rounded-2xl overflow-hidden transition-all duration-300 h-fit",
                 openIndex === index
-                  ? "border-primary/30 shadow-lg"
-                  : "border-border hover:border-primary/20 hover:shadow-md"
+                  ? "border-primary/30"
+                  : "border-border"
               )}
             >
               <button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full flex items-start justify-between gap-4 p-6 text-left hover:bg-secondary/20 transition-colors"
+                className="w-full flex items-start justify-between gap-4 p-6 text-left"
               >
                 <span className="font-semibold text-foreground pr-2 text-base">
                   {faq.q}
@@ -79,30 +78,21 @@ export function NonResidentFAQSection() {
                 >
                   <ChevronDown
                     className={cn(
-                      "size-4 transition-transform duration-300",
+                      "size-4",
                       openIndex === index && "rotate-180"
                     )}
                   />
                 </span>
               </button>
-              <AnimatePresence>
-                {openIndex === index && (
-                  <motion.div
-                    key={faq.q}
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="overflow-hidden"
-                  >
-                    <div className="px-6 pb-6 pt-0 border-t border-border/50">
-                      <p className="pt-4 text-muted-foreground leading-relaxed text-sm">
-                        {faq.a}
-                      </p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {openIndex === index && (
+                <div className="overflow-hidden">
+                  <div className="px-6 pb-6 pt-0 border-t border-border/50">
+                    <p className="pt-4 text-muted-foreground leading-relaxed text-sm">
+                      {faq.a}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>

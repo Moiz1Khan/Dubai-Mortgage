@@ -7,11 +7,11 @@ import { ClientMortgageCalculator, ClientProcess, ClientFAQ, ClientCTAAndLeadSec
 import { WhoWeHelp } from "@/components/WhoWeHelp";
 import { StatsBar } from "@/components/StatsBar";
 import { RatesTable } from "@/components/RatesTable";
-import { MeetYourTeam } from "@/components/MeetYourTeam";
 import { OurPromises } from "@/components/OurPromises";
 import { EligibilityChecklist } from "@/components/EligibilityChecklist";
 import { Footer } from "@/components/Footer";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { LazySection } from "@/components/LazySection";
 
 const CaseStudies = dynamic(() => import("@/components/CaseStudies").then((m) => ({ default: m.CaseStudies })), { ssr: true });
 const Testimonials = dynamic(() => import("@/components/Testimonials").then((m) => ({ default: m.Testimonials })), { ssr: true });
@@ -32,22 +32,21 @@ export default function Home() {
         <main>
           <Hero />
           <div className="theme-gradient">
-          <TrustBar />
-          <ComparisonSection />
-          <ClientProcess />
-          <ClientMortgageCalculator />
-          <WhoWeHelp />
-          <CaseStudies />
-          <StatsBar />
-          <RatesTable />
-          <MeetYourTeam />
-          <OurPromises />
-          <EligibilityChecklist />
-          <Testimonials />
-          <ClientFAQ />
-          <BlogSection />
-          <ClientCTAAndLeadSection />
-          <Footer />
+          <LazySection minHeightClassName="min-h-[200px]"><TrustBar /></LazySection>
+          <LazySection minHeightClassName="min-h-[360px]"><ComparisonSection /></LazySection>
+          <LazySection minHeightClassName="min-h-[360px]" anchorId="process"><ClientProcess /></LazySection>
+          <LazySection minHeightClassName="min-h-[460px]" anchorId="calculator"><ClientMortgageCalculator /></LazySection>
+          <LazySection minHeightClassName="min-h-[320px]"><WhoWeHelp /></LazySection>
+          <LazySection minHeightClassName="min-h-[360px]"><CaseStudies /></LazySection>
+          <LazySection minHeightClassName="min-h-[260px]"><StatsBar /></LazySection>
+          <LazySection minHeightClassName="min-h-[360px]" anchorId="rates"><RatesTable /></LazySection>
+          <LazySection minHeightClassName="min-h-[320px]"><OurPromises /></LazySection>
+          <LazySection minHeightClassName="min-h-[320px]"><EligibilityChecklist /></LazySection>
+          <LazySection minHeightClassName="min-h-[320px]"><Testimonials /></LazySection>
+          <LazySection minHeightClassName="min-h-[420px]" anchorId="faq"><ClientFAQ /></LazySection>
+          <LazySection minHeightClassName="min-h-[420px]"><BlogSection /></LazySection>
+          <LazySection minHeightClassName="min-h-[500px]" anchorId="contact"><ClientCTAAndLeadSection /></LazySection>
+          <LazySection minHeightClassName="min-h-[240px]"><Footer /></LazySection>
           </div>
         </main>
     </>

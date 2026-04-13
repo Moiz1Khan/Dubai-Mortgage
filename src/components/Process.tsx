@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 
 const phases = [
@@ -30,7 +30,7 @@ const phases = [
   },
   {
     id: 3,
-    days: "—",
+    days: "Day 4-14",
     title: "Bank Submission & Negotiation",
     subtitle: "We submit to multiple lenders simultaneously.",
     image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1772460406/WhatsApp_Image_2026-03-02_at_6.44.54_PM_2_mhie3u.jpg",
@@ -43,7 +43,7 @@ const phases = [
   },
   {
     id: 4,
-    days: "—",
+    days: "Day 15+",
     title: "Approval & Closing",
     subtitle: "You sign papers and collect keys.",
     image: "https://res.cloudinary.com/dxfejax3u/image/upload/v1772460407/WhatsApp_Image_2026-03-02_at_6.44.53_PM_rkwtgy.jpg",
@@ -58,37 +58,13 @@ const phases = [
 ];
 
 export function Process() {
-  const [activePhase, setActivePhase] = useState<number | null>(null);
-  const sectionRef = useRef<HTMLElement>(null);
-  const phaseRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const index = phaseRefs.current.findIndex((ref) => ref === entry.target);
-            if (index !== -1) {
-              setActivePhase(index);
-            }
-          }
-        });
-      },
-      {
-        threshold: 0.3,
-        rootMargin: "-100px 0px",
-      }
-    );
-
-    phaseRefs.current.forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
-
-    return () => observer.disconnect();
-  }, []);
+  const [activePhase, setActivePhase] = useState(0);
+  const [mobileOpenPhase, setMobileOpenPhase] = useState<number | null>(0);
+  const progressPercent =
+    phases.length > 1 ? (activePhase / (phases.length - 1)) * 100 : 0;
 
   return (
-    <section ref={sectionRef} id="process" className="py-10 md:py-14 bg-transparent" data-reveal data-green-glow>
+    <section id="process" className="py-10 md:py-14 bg-transparent" data-reveal data-green-glow>
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-2 green-underline">
           HOW IT WORKS
@@ -99,8 +75,12 @@ export function Process() {
 
         {/* Desktop: Horizontal Timeline Layout */}
         <div className="hidden lg:block relative">
-          {/* Connecting Line */}
-          <div className="absolute top-32 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-green-500/30 to-transparent" />
+          {/* Connecting Line + Progress */}
+          <div className="absolute top-8 left-[12.5%] right-[12.5%] h-1 rounded-full bg-border/70" />
+          <div
+            className="absolute top-8 left-[12.5%] h-1 rounded-full bg-gradient-to-r from-green-400 to-green-500 transition-all duration-300"
+            style={{ width: `${progressPercent * 0.75}%` }}
+          />
           
           <div className="grid grid-cols-4 gap-6 relative z-10">
             {phases.map((phase, index) => {
@@ -108,30 +88,33 @@ export function Process() {
               return (
                 <div
                   key={phase.id}
-                  ref={(el) => { phaseRefs.current[index] = el; }}
-                  className={`group relative transition-all duration-700 ${
-                    isActive ? "scale-105" : "scale-100 opacity-70"
+                  className={`group relative transition-opacity duration-300 ${
+                    isActive ? "opacity-100" : "opacity-85"
                   }`}
                   data-phase-index={index}
                 >
                   {/* Step Number Circle */}
                   <div className="absolute -top-8 left-1/2 -translate-x-1/2 z-20">
-                    <div
+                    <button
+                      type="button"
+                      onClick={() => setActivePhase(index)}
                       className={`w-16 h-16 rounded-full border-4 flex items-center justify-center font-bold text-lg transition-all duration-500 ${
                         isActive
-                          ? "bg-green-500 border-green-500 text-white shadow-lg shadow-green-500/50 scale-110"
-                          : "bg-background border-gray-300 text-gray-400"
+                          ? "bg-green-500 border-green-400 text-white shadow-md scale-105"
+                          : "bg-background border-gray-300 text-gray-400 hover:border-green-300"
                       }`}
                     >
                       {index + 1}
-                    </div>
+                    </button>
                   </div>
 
                   {/* Card */}
-                  <div
+                  <button
+                    type="button"
+                    onClick={() => setActivePhase(index)}
                     className={`relative h-[500px] rounded-2xl overflow-hidden border-2 transition-all duration-500 card-green-accent ${
                       isActive
-                        ? "border-green-500/50 shadow-2xl shadow-green-500/20"
+                        ? "border-green-400/80 shadow-lg"
                         : "border-border hover:border-green-500/30"
                     }`}
                   >
@@ -141,16 +124,16 @@ export function Process() {
                         src={phase.image}
                         alt={phase.title}
                         fill
-                        className={`object-cover transition-transform duration-700 ${
-                          isActive ? "scale-110" : "scale-100"
+                        className={`object-cover transition-opacity duration-300 ${
+                          isActive ? "opacity-100" : "opacity-90"
                         }`}
                         sizes="(max-width: 1024px) 100vw, 25vw"
                       />
                       <div
                         className={`absolute inset-0 bg-gradient-to-b transition-opacity duration-500 ${
                           isActive
-                            ? "from-black/60 via-black/50 to-black/70 opacity-100"
-                            : "from-black/70 via-black/60 to-black/80 opacity-100"
+                            ? "from-black/35 via-black/30 to-black/48 opacity-100"
+                            : "from-black/72 via-black/62 to-black/82 opacity-100"
                         }`}
                       />
                     </div>
@@ -183,7 +166,7 @@ export function Process() {
                             <span
                               className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-bold mt-0.5 transition-all duration-300 ${
                                 isActive
-                                  ? "bg-green-500 text-white scale-110"
+                                  ? "bg-green-500 text-white scale-105"
                                   : "bg-white/80 text-gray-700"
                               }`}
                             >
@@ -196,7 +179,7 @@ export function Process() {
                         ))}
                       </ul>
                     </div>
-                  </div>
+                  </button>
                 </div>
               );
             })}
@@ -206,17 +189,16 @@ export function Process() {
         {/* Mobile: Vertical Accordion Layout */}
         <div className="lg:hidden space-y-6">
           {phases.map((phase, index) => {
-            const isActive = activePhase === index;
+            const isActive = mobileOpenPhase === index;
             return (
               <div
                 key={phase.id}
-                ref={(el) => { phaseRefs.current[index] = el; }}
                 className={`relative rounded-2xl overflow-hidden border-2 transition-all duration-500 card-green-accent ${
                   isActive
                     ? "border-green-500/50 shadow-xl shadow-green-500/20"
                     : "border-border"
                 }`}
-                onClick={() => setActivePhase(isActive ? null : index)}
+                onClick={() => setMobileOpenPhase(isActive ? null : index)}
               >
                 {/* Image Background */}
                 <div className="absolute inset-0 z-0">
@@ -281,7 +263,7 @@ export function Process() {
         <div className="mt-12 text-center">
           <a
             href="#contact"
-            className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-3.5 text-base font-semibold text-primary-foreground hover:bg-primary/90 transition-colors btn-green-accent"
+            className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-3.5 text-base font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
           >
             Book Your Free 15-Minute Call Now
           </a>

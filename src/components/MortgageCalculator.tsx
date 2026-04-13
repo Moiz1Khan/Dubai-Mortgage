@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { ApplyNowLeadModal } from "@/components/ApplyNowLeadModal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const residencyTypes = ["UAE Resident", "UAE National", "Non-Resident"] as const;
-const financingTypes = ["Purchase Mortgage", "Refinance", "Renovation Loan"] as const;
-const employmentTypes = ["Salaried", "Self-Employed", "Business Owner", "Freelancer"] as const;
 type Residency = (typeof residencyTypes)[number];
 
 // Rate brackets from RatesTable: [minValue, variableLow, variableHigh, minDownPercent]
@@ -73,16 +72,7 @@ export function MortgageCalculator() {
   const [downPaymentStr, setDownPaymentStr] = useState("400,000");
   const [loanDuration, setLoanDuration] = useState(25);
   const [modalOpen, setModalOpen] = useState(false);
-
-  const [financingType, setFinancingType] = useState<string>("");
-  const [employmentType, setEmploymentType] = useState<string>("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [postalCode, setPostalCode] = useState("");
-  const [modalLoanAmountStr, setModalLoanAmountStr] = useState("");
+  const [modalLoanAmountStr, setModalLoanAmountStr] = useState("600000");
   const [modalLoanDuration, setModalLoanDuration] = useState(25);
 
   const propertyValue = Math.max(0, parseNumberFromString(propertyValueStr));
@@ -96,24 +86,13 @@ export function MortgageCalculator() {
   const userDownPayment = Math.min(downPayment, propertyValue);
   const downPaymentError = downPayment < minDownPayment;
 
-  const { loanAmount, monthlyPayment, totalRepayment, totalInterest } =
+  const { loanAmount, monthlyPayment } =
     calculateMortgage(
       propertyValue,
       userDownPayment,
       loanDuration,
       annualRate
     );
-
-  useEffect(() => {
-    if (modalOpen) {
-      document.body.style.overflow = "hidden";
-      setModalLoanAmountStr(loanAmount > 0 ? loanAmount.toString() : "");
-      setModalLoanDuration(loanDuration);
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [modalOpen, loanAmount, loanDuration]);
 
   return (
     <section id="calculator" className="relative py-10 md:py-14 overflow-hidden bg-transparent" data-reveal>
@@ -277,7 +256,17 @@ export function MortgageCalculator() {
                 </div>
               </div>
 
-              <Button className="w-full mt-6" size="lg" onClick={() => setModalOpen(true)}>
+              <Button
+                className="w-full mt-6"
+                size="lg"
+                onClick={() => {
+                  setModalLoanAmountStr(
+                    loanAmount > 0 ? loanAmount.toString() : "600000"
+                  );
+                  setModalLoanDuration(loanDuration);
+                  setModalOpen(true);
+                }}
+              >
                 Get Started
               </Button>
             </div>
@@ -285,210 +274,20 @@ export function MortgageCalculator() {
         </div>
       </div>
 
-      {/* Apply Now modal - dark glass card aesthetic */}
-      {modalOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-start justify-center pt-24 pb-8 px-4 overflow-y-auto scrollbar-hide"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="apply-modal-title"
-        >
-          <div
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-md -z-10"
-            onClick={() => setModalOpen(false)}
-            aria-hidden
-          />
-          <div
-            className={cn(
-              "relative w-full max-w-2xl max-h-[calc(100vh-8rem)] overflow-y-auto scrollbar-hide",
-              "bg-slate-800/40 backdrop-blur-2xl",
-              "border border-slate-500/30",
-              "rounded-lg",
-              "shadow-[0_0_60px_rgba(59,130,246,0.2),0_0_0_1px_rgba(96,165,250,0.2),0_25px_50px_-12px_rgba(0,0,0,0.6)]"
-            )}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="sticky top-0 z-10 bg-slate-800/70 backdrop-blur-xl border-b border-slate-500/20 px-6 py-4 flex items-center justify-between rounded-t-lg">
-              <h2 id="apply-modal-title" className="text-xl font-bold text-white">
-                Apply Now
-              </h2>
-              <button
-                type="button"
-                onClick={() => setModalOpen(false)}
-                className="p-2 rounded-full text-slate-400 hover:bg-slate-600/50 hover:text-white transition-colors"
-                aria-label="Close"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 6 6 18" /><path d="m6 6 12 12" />
-                </svg>
-              </button>
-            </div>
-
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                setModalOpen(false);
-              }}
-              className="p-6 space-y-4"
-            >
-              {/* Financing & Employment - widget cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-slate-700/30 backdrop-blur-sm border border-slate-500/20 rounded-lg p-4">
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Choose Your Financing Type</label>
-                  <div className="flex flex-wrap gap-2">
-                    {financingTypes.map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => setFinancingType(t)}
-                        className={cn(
-                          "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-                          financingType === t
-                            ? "bg-blue-500/80 text-white"
-                            : "bg-slate-600/50 text-slate-300 hover:bg-slate-500/50 hover:text-white border border-slate-500/30"
-                        )}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="bg-slate-700/30 backdrop-blur-sm border border-slate-500/20 rounded-lg p-4">
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Employment Type</label>
-                  <div className="flex flex-wrap gap-2">
-                    {employmentTypes.map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => setEmploymentType(t)}
-                        className={cn(
-                          "px-4 py-2 rounded-lg text-sm font-medium transition-colors",
-                          employmentType === t
-                            ? "bg-blue-500/80 text-white"
-                            : "bg-slate-600/50 text-slate-300 hover:bg-slate-500/50 hover:text-white border border-slate-500/30"
-                        )}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Loan details - widget card */}
-              <div className="bg-slate-700/30 backdrop-blur-sm border border-slate-500/20 rounded-lg p-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Your loan amount (AED)</label>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      value={modalLoanAmountStr}
-                      onChange={(e) => setModalLoanAmountStr(e.target.value.replace(/\D/g, ""))}
-                      placeholder="e.g. 1125000"
-                      className="w-full h-12 px-4 rounded-lg bg-slate-800/60 border border-slate-500/30 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">Loan duration</label>
-                    <select
-                      value={modalLoanDuration}
-                      onChange={(e) => setModalLoanDuration(Number(e.target.value))}
-                      className="w-full h-12 px-4 rounded-lg bg-slate-800/60 border border-slate-500/30 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 [&>option]:bg-slate-800"
-                    >
-                      {Array.from({ length: 25 }, (_, i) => i + 1).map((y) => (
-                        <option key={y} value={y}>{y} years</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              {/* Personal details - widget cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-slate-700/30 backdrop-blur-sm border border-slate-500/20 rounded-lg p-4">
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Name *</label>
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="John Smith"
-                    className="w-full h-12 px-4 rounded-lg bg-slate-800/60 border border-slate-500/30 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
-                  />
-                </div>
-                <div className="bg-slate-700/30 backdrop-blur-sm border border-slate-500/20 rounded-lg p-4">
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Email</label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="john@example.com"
-                    className="w-full h-12 px-4 rounded-lg bg-slate-800/60 border border-slate-500/30 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-slate-700/30 backdrop-blur-sm border border-slate-500/20 rounded-lg p-4">
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Mobile Number *</label>
-                  <input
-                    type="tel"
-                    required
-                    value={mobile}
-                    onChange={(e) => setMobile(e.target.value)}
-                    placeholder="+971 50 123 4567"
-                    className="w-full h-12 px-4 rounded-lg bg-slate-800/60 border border-slate-500/30 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
-                  />
-                </div>
-                <div className="bg-slate-700/30 backdrop-blur-sm border border-slate-500/20 rounded-lg p-4">
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Present Address *</label>
-                  <input
-                    type="text"
-                    required
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder="Street, Building, Area"
-                    className="w-full h-12 px-4 rounded-lg bg-slate-800/60 border border-slate-500/30 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-slate-700/30 backdrop-blur-sm border border-slate-500/20 rounded-lg p-4">
-                  <label className="block text-sm font-medium text-slate-300 mb-2">City *</label>
-                  <input
-                    type="text"
-                    required
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    placeholder="Dubai"
-                    className="w-full h-12 px-4 rounded-lg bg-slate-800/60 border border-slate-500/30 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
-                  />
-                </div>
-                <div className="bg-slate-700/30 backdrop-blur-sm border border-slate-500/20 rounded-lg p-4">
-                  <label className="block text-sm font-medium text-slate-300 mb-2">Postal / Zip Code *</label>
-                  <input
-                    type="text"
-                    required
-                    value={postalCode}
-                    onChange={(e) => setPostalCode(e.target.value)}
-                    placeholder="12345"
-                    className="w-full h-12 px-4 rounded-lg bg-slate-800/60 border border-slate-500/30 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="w-full h-14 rounded-lg text-base font-semibold text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-800 transition-all"
-              >
-                Send
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+      <ApplyNowLeadModal
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        source="calculator-modal"
+        initialLoanAmountStr={modalLoanAmountStr}
+        initialDurationYears={modalLoanDuration}
+        metadata={{
+          residency,
+          propertyValue,
+          downPayment: userDownPayment,
+          estimatedMonthlyPayment: Math.round(monthlyPayment),
+        }}
+        titleId="apply-modal-title"
+      />
     </section>
   );
 }

@@ -22,15 +22,16 @@ export function useTheme() {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "light";
+    const stored = localStorage.getItem("theme") as Theme | null;
+    return stored ?? "light";
+  });
 
   useEffect(() => {
-    const stored = localStorage.getItem("theme") as Theme | null;
-    const initial: Theme = stored ?? "light";
-    setThemeState(initial);
-    document.documentElement.classList.toggle("dark", initial === "dark");
+    document.documentElement.classList.toggle("dark", theme === "dark");
     document.documentElement.classList.add("starlight");
-  }, []);
+  }, [theme]);
 
   function setTheme(next: Theme) {
     setThemeState(next);

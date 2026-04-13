@@ -15,6 +15,7 @@ const financeItems = [
 const navLinks = [
   { href: "/about", label: "About" },
   { href: "/#calculator", label: "Calculator" },
+  { href: "/blog", label: "Blog" },
   { href: "/faq", label: "FAQ" },
   { href: "/contact", label: "Contact Us" },
 ];
@@ -64,7 +65,7 @@ export function Header() {
         <Link href="/" className="flex items-center shrink-0">
           <Image
             src="https://res.cloudinary.com/dxfejax3u/image/upload/v1773153203/Full_Logo_kzokcw.png"
-            alt="NexHome Logo"
+            alt="Credit Link Logo"
             width={120}
             height={40}
             className="h-8 w-auto object-contain"
@@ -128,9 +129,6 @@ export function Header() {
 
         {/* Right Section */}
         <div className="flex items-center gap-3 shrink-0">
-          <Link href="/admin" className={`hidden sm:inline font-medium text-sm hover:opacity-80 transition-opacity ${textClass}`}>
-            Log In
-          </Link>
           <Link href="/#calculator" className={`hidden sm:inline-flex px-5 py-2.5 rounded-xl text-sm font-semibold shadow-sm hover:bg-white hover:shadow transition-all ${btnClass}`}>
             Get started
           </Link>
@@ -180,9 +178,6 @@ export function Header() {
             ))}
 
             <div className={`border-t my-2 ${overVideo ? "border-white/20" : "border-gray-300/50"}`} />
-            <Link href="/admin" onClick={() => setMobileOpen(false)} className={`px-4 py-3 font-medium ${textClass}`}>
-              Log In
-            </Link>
             <Link href="/#calculator" onClick={() => setMobileOpen(false)} className="mt-2 px-5 py-3 rounded-full bg-[#28303a] text-white font-semibold text-center shadow-[0_4px_14px_rgba(0,0,0,0.2)] hover:bg-[#323d48]">
               Get started
             </Link>

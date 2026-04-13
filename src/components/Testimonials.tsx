@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { Star, Quote } from "lucide-react";
+import { Star } from "lucide-react";
+import { SvgBadge } from "@/components/SvgBadge";
 import { images } from "@/lib/media";
 
 const testimonials = [
@@ -31,7 +31,7 @@ const testimonials = [
 
 export function Testimonials() {
   return (
-    <section className="py-10 md:py-14 relative overflow-hidden bg-transparent" data-reveal data-green-glow>
+    <section className="py-10 md:py-14 relative overflow-x-hidden bg-transparent">
       <div className="absolute inset-0">
         <Image
           src="https://res.cloudinary.com/dxfejax3u/image/upload/v1772461361/WhatsApp_Image_2026-03-02_at_7.21.57_PM_tlunpz.jpg"
@@ -48,7 +48,7 @@ export function Testimonials() {
           </h2>
           <div className="flex items-center justify-center gap-2 mb-2">
             <span className="text-4xl font-bold">4.9</span>
-            <div className="flex gap-1">
+            <div className="flex gap-1" aria-hidden>
               {[...Array(5)].map((_, i) => (
                 <Star key={i} className="size-6 fill-primary text-primary" />
               ))}
@@ -56,17 +56,18 @@ export function Testimonials() {
           </div>
           <p className="text-sm text-muted-foreground">Powered by Google</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-6 md:gap-8" data-stagger>
+        <div className="grid md:grid-cols-3 gap-6 md:gap-8">
           {testimonials.map((t) => (
-            <motion.div
+            <div
               key={t.name}
-              data-stagger-item
-              className="border-gradient-wrap shine-sweep bg-card/95 backdrop-blur border border-border rounded-2xl p-6 overflow-hidden card-green-accent"
+              className="group bg-card border border-border rounded-2xl p-6 overflow-hidden shadow-sm transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_14px_40px_-14px_rgba(40,48,58,0.22)]"
             >
-              <Quote className="size-8 text-primary/30 mb-4" />
+              <div className="mb-4 transition-transform duration-300 ease-out group-hover:scale-[1.02]">
+                <SvgBadge variant="quote" className="size-14" />
+              </div>
               <p className="text-foreground mb-6">&quot;{t.quote}&quot;</p>
               <div className="flex items-center gap-3">
-                <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
+                <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0 ring-1 ring-border transition-[box-shadow] duration-300 group-hover:ring-primary/20 group-hover:shadow-md">
                   <Image
                     src={t.avatar}
                     alt={t.name}
@@ -79,7 +80,7 @@ export function Testimonials() {
                   <div className="text-sm text-muted-foreground">{t.role}</div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
